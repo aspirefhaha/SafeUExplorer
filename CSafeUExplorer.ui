@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CSafeUExplorer</class>
+ <widget class="QMainWindow" name="CSafeUExplorer">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>816</width>
+    <height>488</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>CSafeUExplorer</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QTableView" name="tvGlobal"/>
+      <widget class="QWidget" name="layoutWidget">
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>SafeUDisk</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTreeView" name="tvSafeUDisk"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="layoutWidget">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>LocalDisks</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTreeView" name="tvLocalDisks"/>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>816</width>
+     <height>23</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionDesktop">
+   <property name="icon">
+    <iconset resource="safeuexplorer.qrc">
+     <normaloff>:/images/desktop.png</normaloff>:/images/desktop.png</iconset>
+   </property>
+   <property name="text">
+    <string>Desktop</string>
+   </property>
+   <property name="toolTip">
+    <string>Desktop</string>
+   </property>
+  </action>
+  <action name="actionUpFolder">
+   <property name="icon">
+    <iconset resource="safeuexplorer.qrc">
+     <normaloff>:/images/upfolder.png</normaloff>:/images/upfolder.png</iconset>
+   </property>
+   <property name="text">
+    <string>UpFolder</string>
+   </property>
+   <property name="toolTip">
+    <string>UpFolder</string>
+   </property>
+  </action>
+  <action name="actionRefresh">
+   <property name="icon">
+    <iconset resource="safeuexplorer.qrc">
+     <normaloff>:/images/refresh.png</normaloff>:/images/refresh.png</iconset>
+   </property>
+   <property name="text">
+    <string>Refresh</string>
+   </property>
+   <property name="toolTip">
+    <string>Refresh</string>
+   </property>
+  </action>
+  <action name="actionChgPassword">
+   <property name="icon">
+    <iconset resource="safeuexplorer.qrc">
+     <normaloff>:/images/chgpasswd.png</normaloff>:/images/chgpasswd.png</iconset>
+   </property>
+   <property name="text">
+    <string>ChgPassword</string>
+   </property>
+   <property name="toolTip">
+    <string>ChgPassword</string>
+   </property>
+  </action>
+  <action name="actionFormatUDisk">
+   <property name="icon">
+    <iconset resource="safeuexplorer.qrc">
+     <normaloff>:/images/format.png</normaloff>:/images/format.png</iconset>
+   </property>
+   <property name="text">
+    <string>FormatUDisk</string>
+   </property>
+   <property name="toolTip">
+    <string>FormatUDisk</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="icon">
+    <iconset resource="safeuexplorer.qrc">
+     <normaloff>:/images/quit.png</normaloff>:/images/quit.png</iconset>
+   </property>
+   <property name="text">
+    <string>Quit</string>
+   </property>
+   <property name="toolTip">
+    <string>Quit</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="safeuexplorer.qrc"/>
+ </resources>
+ <connections/>
+</ui>

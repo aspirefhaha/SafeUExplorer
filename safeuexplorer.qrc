@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/desktop.png</file>
+        <file>images/format.png</file>
+        <file>images/quit.png</file>
+        <file>images/refresh.png</file>
+        <file>images/upfolder.png</file>
+        <file>images/chgpasswd.png</file>
+    </qresource>
+</RCC>
