@@ -2,41 +2,81 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
-    <name>CLocalModel</name>
+    <name>CGlobalModel</name>
     <message>
-        <location filename="CLocalModel.cpp" line="243"/>
+        <location filename="CGlobalModel.cpp" line="23"/>
+        <source>SafeUDiskDataZone</source>
+        <translation>安全U盘数据区</translation>
+    </message>
+    <message>
+        <location filename="CGlobalModel.cpp" line="234"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
     <message>
-        <location filename="CLocalModel.cpp" line="245"/>
+        <location filename="CGlobalModel.cpp" line="236"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="CLocalModel.cpp" line="249"/>
+        <location filename="CGlobalModel.cpp" line="240"/>
         <source>Kind</source>
         <comment>Match OS X Finder</comment>
         <translation>类型</translation>
     </message>
     <message>
-        <location filename="CLocalModel.cpp" line="251"/>
+        <location filename="CGlobalModel.cpp" line="242"/>
         <source>Type</source>
         <comment>All other platforms</comment>
         <translation>类型</translation>
     </message>
     <message>
-        <location filename="CLocalModel.cpp" line="258"/>
+        <location filename="CGlobalModel.cpp" line="249"/>
         <source>Date Modified</source>
         <translation>修改日期</translation>
     </message>
     <message>
-        <location filename="CLocalModel.cpp" line="321"/>
+        <location filename="CGlobalModel.cpp" line="312"/>
+        <source>File</source>
+        <translation>文件</translation>
+    </message>
+</context>
+<context>
+    <name>CLocalModel</name>
+    <message>
+        <location filename="CLocalModel.cpp" line="227"/>
+        <source>Name</source>
+        <translation>名称</translation>
+    </message>
+    <message>
+        <location filename="CLocalModel.cpp" line="229"/>
+        <source>Size</source>
+        <translation>大小</translation>
+    </message>
+    <message>
+        <location filename="CLocalModel.cpp" line="233"/>
+        <source>Kind</source>
+        <comment>Match OS X Finder</comment>
+        <translation>类型</translation>
+    </message>
+    <message>
+        <location filename="CLocalModel.cpp" line="235"/>
+        <source>Type</source>
+        <comment>All other platforms</comment>
+        <translation>类型</translation>
+    </message>
+    <message>
+        <location filename="CLocalModel.cpp" line="242"/>
+        <source>Date Modified</source>
+        <translation>修改日期</translation>
+    </message>
+    <message>
+        <location filename="CLocalModel.cpp" line="305"/>
         <source>File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="CLocalModel.cpp" line="377"/>
+        <location filename="CLocalModel.cpp" line="361"/>
         <source>Drive</source>
         <translation>驱动器</translation>
     </message>

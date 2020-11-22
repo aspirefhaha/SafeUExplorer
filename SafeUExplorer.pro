@@ -25,13 +25,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 RC_ICONS = udisk.ico
 
 SOURCES += \
+        CGlobalModel.cpp \
         CLocalModel.cpp \
+        CommonTools.cpp \
         main.cpp \
         CSafeUExplorer.cpp
 
 HEADERS += \
+        CFSPrivate.h \
+        CGlobalModel.h \
         CLocalModel.h \
         CSafeUExplorer.h \
+        CommonTools.h \
         FsItemType.h
 
 FORMS += \

@@ -5,6 +5,7 @@
 #include <QActionGroup>
 #include <QToolBar>
 #include "CLocalModel.h"
+#include "CGlobalModel.h"
 
 namespace Ui {
 class CSafeUExplorer;
@@ -23,6 +24,7 @@ private:
 
     CLocalModel * m_pLocalModel;
     CLocalModel * m_pSafeUModel;
+    CGlobalModel * m_pGlobalModel;
 };
 
 #endif // CSAFEUEXPLORER_H

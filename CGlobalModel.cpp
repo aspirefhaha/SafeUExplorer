@@ -2,58 +2,68 @@
 #undef UNICODE
 #endif
 
-#include "CLocalModel.h"
-#include <qimage.h>
-#include <qdir.h>
-#include <qfileinfo.h>
-#include <qdatetime.h>
-#include <qdebug.h>
-#include <qfileiconprovider.h>
-
-#include <Windows.h>
-
+#include "CGlobalModel.h"
+#include <QImage>
+#include <QDir>
+#include <QFileInfo>
+#include <QDateTime>
+#include <QDebug>
+#include <QList>
+#include <QStringList>
+#include <QFileIconProvider>
+#include "CommonTools.h"
+#include "CFSPrivate.h"
 
 static bool needSDebug = false;
 
-CLocalModel::CLocalModel(QObject *parent)
+CGlobalModel::CGlobalModel(QObject *parent)
 	: QAbstractItemModel(parent)
 {
+    //QStringList resultDriversName;
+    FSPrivate * pRootItem = new FSPrivate(FTUSAFE,tr("SafeUDiskDataZone"),0,0,"/",NULL);
+    m_rootDrives.append(pRootItem);
+    foreach (QFileInfo my_info, QDir::drives())
+    {
+        //resultDriversName.push_back(my_info.absolutePath());
+        QString vl = GetVolumeLabel(my_info.absolutePath());
+        //qDebug() << "VolumeName:" << vl;
+        QString label = my_info.absolutePath();
+        if(label.endsWith("/")){
+            label = label.left(label.size() -1);
+        }
+        if(!vl.isEmpty()){
+            label = vl+"(" + label + ")";
+        }
+        pRootItem = new FSPrivate(FTLDRIVE,label,0,0,my_info.absolutePath(),NULL);
+        m_rootDrives.append(pRootItem);
+    }
 
+
+    //qDebug() << resultDriversName;
 	
 }
 
-CLocalModel::~CLocalModel()
+CGlobalModel::~CGlobalModel()
 {
 	for(int i = 0; i < m_rootDrives.count(); i++)
 	{
-//		ExfatFSPrivate * rootItem = m_rootDrives.at(i);
-//		if(rootItem->m_pexfatRoot){
-//			//TODO
+        FSPrivate * rootItem = m_rootDrives.at(i);
+//        if(rootItem->m_pexfatRoot){
+//            //TODO
 //            //exfat_unmount(rootItem->m_pexfatRoot);
-//			free(rootItem->m_pexfatRoot);
-//		}
+//            free(rootItem->m_pexfatRoot);
+//        }
 	}
+    foreach(auto item,m_rootDrives)
+    {
+        m_rootDrives.removeOne(item);
+        //qDebug()<<"qlist.size()="<<m_rootDrives.size();
+    }
 //    qDeleteAll(m_allItems);
 }
 
-//ExfatFSPrivate * CLocalModel::findOutFSChild(QString abspath,FSITEMTYPE type) const{
-//	QList<ExfatFSPrivate *>::const_iterator pitem= m_allItems.begin();
-//	while(pitem != m_allItems.end()){
-//		if((*pitem)->match(abspath,type)){
-//			return *pitem;
-//		}
-//		pitem++;
-//	}
-//	return NULL;
-//}
 
-//bool CLocalModel::isDirectory(const char * dirpath)
-//{
-
-//	return false;
-//}
-
-QModelIndex CLocalModel::index(int row, int column,
+QModelIndex CGlobalModel::index(int row, int column,
                   const QModelIndex &parent) const
 {
 	//qDebug() << "call index with row" << row << " col " << column  << " parent row " << parent.row() << " column " << parent.column() ;
@@ -71,7 +81,7 @@ QModelIndex CLocalModel::index(int row, int column,
         // 其它层节点绑定关系
         if (parent.internalPointer() != nullptr)
         {
-            ExfatFSPrivate * parentItemPtr = static_cast<ExfatFSPrivate *>(parent.internalPointer());
+            FSPrivate * parentItemPtr = static_cast<FSPrivate *>(parent.internalPointer());
 			
 			QString childPath ;
             FSITEMTYPE childType = FTUNKNOWN;
@@ -112,10 +122,10 @@ QModelIndex CLocalModel::index(int row, int column,
 //						exfat_closedir(ef, &it);
 //						exfat_put_node(ef,pparentnode);
 //						if(childType != EXFTUNKNOWN){
-//							ExfatFSPrivate * pFind = NULL;
+//							FSPrivate * pFind = NULL;
 //							pFind = findOutFSChild(childPath,childType);
 //							if(pFind == NULL){
-//								pFind = new ExfatFSPrivate(childPath,childType,row,column,parentItemPtr);
+//								pFind = new FSPrivate(childPath,childType,row,column,parentItemPtr);
 //                                (const_cast<CLocalModel*>(this))->m_allItems.append(pFind);
 //							}
 //							return createIndex(row,column,pFind);
@@ -167,10 +177,10 @@ QModelIndex CLocalModel::index(int row, int column,
 //						exfat_closedir(ef, &it);
 //						exfat_put_node(ef,pparentnode);
 //						if(childType != EXFTUNKNOWN){
-//							ExfatFSPrivate * pFind = NULL;
+//							FSPrivate * pFind = NULL;
 //							pFind = findOutFSChild(childPath,childType);
 //							if(pFind == NULL){
-//								pFind = new ExfatFSPrivate(childPath,childType,row,column,parentItemPtr);
+//								pFind = new FSPrivate(childPath,childType,row,column,parentItemPtr);
 //                                (const_cast<CLocalModel*>(this))->m_allItems.append(pFind);
 //							}
 //							return createIndex(row,column,pFind);
@@ -202,7 +212,7 @@ QModelIndex CLocalModel::index(int row, int column,
 //}
 
 
-QVariant CLocalModel::headerData(int section, Qt::Orientation orientation, int role ) const
+QVariant CGlobalModel::headerData(int section, Qt::Orientation orientation, int role ) const
 {
 
 	QString returnValue;
@@ -226,29 +236,14 @@ QVariant CLocalModel::headerData(int section, Qt::Orientation orientation, int r
     switch (section) {
     case 0: returnValue = tr("Name");
             break;
-    case 1: returnValue = tr("Size");
-            break;
-    case 2: returnValue =
-#ifdef Q_OS_MAC
-               tr("Kind", "Match OS X Finder");
-#else
-               tr("Type", "All other platforms");
-#endif
-           break;
-    // Windows   - Type
-    // OS X      - Kind
-    // Konqueror - File Type
-    // Nautilus  - Type
-    case 3: returnValue = tr("Date Modified");
-            break;
     default: return QVariant();
     }
     return returnValue;
 }
-QVariant CLocalModel::data(const QModelIndex & index,
+QVariant CGlobalModel::data(const QModelIndex & index,
                                     int role ) const
 {
-	//qDebug() << "call data with row " << index.row() << " column " << index.column() << " role " << role ;
+    //qDebug() << "call data with row " << index.row() << " column " << index.column() << " role " << role ;
     if(!index.isValid())
     {
         return QVariant();
@@ -262,10 +257,15 @@ QVariant CLocalModel::data(const QModelIndex & index,
     }
 	
 	if(role == Qt::DecorationRole && index.column() == 0){
-		ExfatFSPrivate * selPtr = static_cast<ExfatFSPrivate *>(index.internalPointer()); 
+        FSPrivate * selPtr = static_cast<FSPrivate *>(index.internalPointer());
         FSITEMTYPE fstype = selPtr->fstype;
 		QFileIconProvider icon_provider;
 		switch(fstype){
+        case FTUSAFE:
+            {
+                QIcon icon = icon_provider.icon(QFileIconProvider::Network);
+                return QVariant(icon);
+            }
         case FTFILE:
 			{
 				QIcon icon = icon_provider.icon(QFileIconProvider::File);
@@ -289,9 +289,9 @@ QVariant CLocalModel::data(const QModelIndex & index,
     if(role == Qt::DisplayRole)
     {
 		//int rowcount = index.row();
-		ExfatFSPrivate * selPtr = static_cast<ExfatFSPrivate *>(index.internalPointer()); 
+        FSPrivate * selPtr = static_cast<FSPrivate *>(index.internalPointer());
         FSITEMTYPE fstype = selPtr->fstype;
-		QString fspath = selPtr->absPath;
+        QString fspath = selPtr->absPath;
 		//qDebug() << "want display " << fspath << " type" << fstype << " row " << index.row() << " column " << index.column() << " parent" << index.parent();
 		switch(fstype){
         case FTDIR:
@@ -304,79 +304,23 @@ QVariant CLocalModel::data(const QModelIndex & index,
 				QString filesize = "0";
 				QString filetype = tr("File");
 				QString filelastmodifytime = "1980-01-01 00::00::00";
-//				char utf8str[EXFAT_UTF8_NAME_BUFFER_MAX]={0};
-//				exfat_utf16_to_utf8(utf8str,(const le16_t *)fspath.data(),EXFAT_UTF8_NAME_BUFFER_MAX,fspath.length());
-//				int rc = exfat_lookup(selPtr->m_pexfatRoot,&node,(const char *)&utf8str);
-//				do{
-//					if(rc ==0){
-//						char utf8str[EXFAT_UTF8_NAME_BUFFER_MAX]={0};
-//						int len = 0;
-//						if(node->attrib & EXFAT_ATTRIB_DIR){
-//							filetype=tr("Dir");
-//							filesize = covertHumanString(node->size);
-//						}
-//						else{
-//							//struct stat tmpstat;
-//							//exfat_stat(selPtr->m_pexfatRoot,node,&tmpstat);
-//							filesize = covertHumanString(node->size);
-							
-//						}
-//						filelastmodifytime = QDateTime::fromTime_t(node->mtime).toString("yyyy-MM-dd hh:mm:ss");
-//						len = exfat_utf16_length((const le16_t *)&node->name);
-//						filename = QString::fromUtf16((const  unsigned short *)&node->name,len);
-//						exfat_put_node(selPtr->m_pexfatRoot,node);
-//					}
-//				}while(0);
+
 				switch(index.column()){
 				case 0:
 					return QVariant(filename);
 					break;
-				case 1:
-					return QVariant(filesize);
-					break;
-				case 2:
-					return QVariant(filetype);
-					break;
-				case 3:
-					return QVariant(filelastmodifytime);
-					break;
+
 				default:
-					qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!should not here!!!!!!!!!!!!!!!!!!!!!!!!!!";
+                    qDebug() << "!!!!!!!!!!!should not here!!!!!!!!!!!!!!";
 					break;
 				}
 			}
 			break;
+        case FTUSAFE:
         case FTLDRIVE:
 			{
-				//QFileInfo info(fspath);
-//				QString filename = selPtr->m_pexfatRoot->label;
-//				QString filesize = "0";
-//				if(isRootItem(selPtr)){
-//					qlonglong tmpsize = (qlonglong)(selPtr->m_pexfatRoot->sb->cluster_count.__u32);
-//					filesize = covertHumanString( tmpsize << (selPtr->m_pexfatRoot->sb->spc_bits + selPtr->m_pexfatRoot->sb->sector_bits));
-//				}
-//				QString leftsize = covertHumanString(((qlonglong)exfat_count_free_clusters(selPtr->m_pexfatRoot)) << (selPtr->m_pexfatRoot->sb->spc_bits+selPtr->m_pexfatRoot->sb->sector_bits));
-//				//total = le32_to_cpu(selPtr->m_pexfatRoot->sb->cluster_count);
-//				//selPtr->m_pexfatRoot->sb->allocated_percent = ((total - free) * 100 + total / 2) / total;
-				QString filetype = tr("Drive");
-				QString filelastmodifytime = "";
-//				switch(index.column()){
-//				case 0:
-//					return QVariant(filename+"(" + filesize+")");
-//					break;
-//				case 1:
-//					return QVariant(leftsize);
-//					break;
-//				case 2:
-//					return QVariant(filetype);
-//					break;
-//				case 3:
-//					return QVariant(filelastmodifytime);
-//					break;
-//				default:
-//					qDebug() << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!here!!!!!!!!!!!!!!!!!!!!!!!!!!";
-//					break;
-//				}
+                QString fslabel = selPtr->m_label;
+                return QVariant(fslabel);
 			}
 			break;
 		}
@@ -387,47 +331,8 @@ QVariant CLocalModel::data(const QModelIndex & index,
 	return QVariant();
 }
 
-//int CLocalModel::formatfs(const char * spec)
-//{
 
-//	struct exfat_dev * dev = exfat_open(spec, EXFAT_MODE_RW);
-//	if (dev == NULL)
-//		return 1;
-//	if (setupfs(dev, 9, 6, "NEWFS", 0x1314,0) != 0)
-//	{
-//		exfat_close(dev);
-//		return 1;
-//	}
-//	if (exfat_close(dev) != 0)
-//		return 1;
-//	addRootDevice(m_FSFileName,EXFTDRIVE);
-//	return 0;
-//}
-
-//int CLocalModel::resetfs()
-//{
-//	this->beginResetModel();
-//	for(int i = 0; i < m_rootDrives.count(); i++)
-//	{
-//		ExfatFSPrivate * rootItem = m_rootDrives.at(i);
-//		if(rootItem->m_pexfatRoot){
-//			//TODO
-//			exfat_unmount(rootItem->m_pexfatRoot);
-//			free(rootItem->m_pexfatRoot);
-//		}
-//	}
-//	m_rootDrives.clear();
-	
-//	qDeleteAll(m_allItems);
-//	m_allItems.clear();
-
-//	formatfs(m_FSFileName.toStdString().c_str());
-//	this->addRootDevice(m_FSFileName.toStdString().c_str(),EXFTDRIVE);
-//	this->endResetModel();
-//	return 0;
-//}
-
-QModelIndex CLocalModel::parent(const QModelIndex &child) const
+QModelIndex CGlobalModel::parent(const QModelIndex &child) const
 {
 	//qDebug() << "call parent with cild  row " << child.row() << " column " << child.column() ;
     //* 如果是无效的节点则返回无效节点
@@ -437,7 +342,7 @@ QModelIndex CLocalModel::parent(const QModelIndex &child) const
 		return QModelIndex();
 	}
 
-	ExfatFSPrivate* childData = static_cast<ExfatFSPrivate*>(child.internalPointer());
+    FSPrivate* childData = static_cast<FSPrivate*>(child.internalPointer());
 	for(int i = 0; i < m_rootDrives.count(); i++)
 	{
 		if(m_rootDrives[i] == childData) //* 如果是父节点（分组）则返回无效父节点（分组没有父节点）
@@ -447,7 +352,7 @@ QModelIndex CLocalModel::parent(const QModelIndex &child) const
 		}
 	}
 //	for(int i = 0; i<m_allItems.count();i++){
-//		ExfatFSPrivate* item = m_allItems[i];
+//		FSPrivate* item = m_allItems[i];
 //		if(item == childData){
 //			if(item->m_pParent != NULL){
 //				//qDebug() << "find parent " << item->m_pParent;
@@ -465,7 +370,7 @@ QModelIndex CLocalModel::parent(const QModelIndex &child) const
 //{
 //	for(int i = 0; i < m_rootDrives.count(); i++)
 //	{
-//		ExfatFSPrivate * rootItem = m_rootDrives.at(i);
+//		FSPrivate * rootItem = m_rootDrives.at(i);
 //		if(rootItem->m_pexfatRoot){
 //			//TODO
 //            //exfat_unmount(rootItem->m_pexfatRoot);
@@ -476,10 +381,10 @@ QModelIndex CLocalModel::parent(const QModelIndex &child) const
 
 //}
 
-//bool CLocalModel::isRootItem(ExfatFSPrivate * priv) const
+//bool CLocalModel::isRootItem(FSPrivate * priv) const
 //{
 //	bool isrootitem = false;
-//	QList<ExfatFSPrivate*>::const_iterator litem = m_rootDrives.begin();
+//	QList<FSPrivate*>::const_iterator litem = m_rootDrives.begin();
 //	while(litem != m_rootDrives.end()){
 //		if((*litem)->match(priv->absPath, priv->fstype)){
 //			isrootitem = true;
@@ -494,7 +399,7 @@ QModelIndex CLocalModel::parent(const QModelIndex &child) const
 //void CLocalModel::addRootDevice(QString devname,FSITEMTYPE fstype)
 //{
 //	bool alreadyHas = false;
-//	QList<ExfatFSPrivate*>::iterator litem = m_rootDrives.begin();
+//	QList<FSPrivate*>::iterator litem = m_rootDrives.begin();
 //	while(litem != m_rootDrives.end()){
 //		if((*litem)->match(devname, fstype)){
 //			alreadyHas = true;
@@ -506,7 +411,7 @@ QModelIndex CLocalModel::parent(const QModelIndex &child) const
 //		struct exfat * ef = (struct exfat * )malloc(sizeof(struct exfat));
 //		int mount_ret =  exfat_mount(ef, devname.toStdString().c_str(), "rw");
 //		if(mount_ret ==0){
-//			ExfatFSPrivate * newItem = new ExfatFSPrivate(devname,fstype,m_rootDrives.size(),0,NULL);
+//			FSPrivate * newItem = new FSPrivate(devname,fstype,m_rootDrives.size(),0,NULL);
 //			newItem->m_pexfatRoot = ef;
 //			this->m_rootDrives.append(newItem);
 //			this->m_allItems.append(newItem);
@@ -514,13 +419,13 @@ QModelIndex CLocalModel::parent(const QModelIndex &child) const
 //	}
 //}
 
-int CLocalModel::rowCount(const QModelIndex &parent ) const
+int CGlobalModel::rowCount(const QModelIndex &parent ) const
 {
     if(!parent.isValid()){
 		return m_rootDrives.size();
 	}
 	else{
-		ExfatFSPrivate * parentData = static_cast<ExfatFSPrivate*>(parent.internalPointer());
+        FSPrivate * parentData = static_cast<FSPrivate*>(parent.internalPointer());
 		switch(parentData->fstype ){
         case FTLDRIVE:
 			{
@@ -587,8 +492,8 @@ int CLocalModel::rowCount(const QModelIndex &parent ) const
 	}
 	return 0;
 }
-int CLocalModel::columnCount(const QModelIndex &parent ) const
+int CGlobalModel::columnCount(const QModelIndex &parent ) const
 {
-    return 4;
+    return 1;
 }
 

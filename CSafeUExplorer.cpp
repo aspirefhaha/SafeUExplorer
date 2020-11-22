@@ -1,5 +1,8 @@
 #include "CSafeUExplorer.h"
 #include "ui_CSafeUExplorer.h"
+#include <QStringList>
+#include <QFileInfo>
+#include <QDir>
 
 CSafeUExplorer::CSafeUExplorer(QWidget *parent) :
     QMainWindow(parent),
@@ -21,11 +24,21 @@ CSafeUExplorer::CSafeUExplorer(QWidget *parent) :
     ui->splitter->setStretchFactor(1,40);
     ui->splitter->setStretchFactor(2,40);
 
+    m_pGlobalModel = new CGlobalModel(this);
+    ui->tvGlobal->setHeaderHidden(true);
+    //ui->tvGlobal->verticalHeader()->setVisible(false);
+    ui->tvGlobal->header()->setStretchLastSection(true);
+    ui->tvGlobal->setModel(m_pGlobalModel);
+
     m_pLocalModel = new CLocalModel(this);
     ui->tvLocalDisks->setModel(m_pLocalModel);
+    ui->tvLocalDisks->header()->setStretchLastSection(true);
 
     m_pSafeUModel = new CLocalModel(this);
     ui->tvSafeUDisk->setModel(m_pSafeUModel);
+    ui->tvSafeUDisk->header()->setStretchLastSection(true);
+
+
 }
 
 CSafeUExplorer::~CSafeUExplorer()
