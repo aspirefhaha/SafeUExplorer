@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>816</width>
+    <width>1237</width>
     <height>488</height>
    </rect>
   </property>
@@ -20,9 +20,12 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QTableView" name="tvGlobal"/>
-      <widget class="QWidget" name="layoutWidget">
-       <layout class="QVBoxLayout" name="verticalLayout">
+      <widget class="QTreeView" name="tvGlobal"/>
+      <widget class="QWidget" name="layoutWidget1">
+       <layout class="QVBoxLayout" name="UverticalLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
         <item>
          <widget class="QLabel" name="label">
           <property name="text">
@@ -31,16 +34,46 @@
          </widget>
         </item>
         <item>
-         <widget class="QTreeView" name="tvSafeUDisk"/>
+         <widget class="QLineEdit" name="leUDisk">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="frame">
+           <bool>true</bool>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTreeView" name="tvSafeUDisk">
+          <property name="lineWidth">
+           <number>1</number>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="layoutWidget">
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+      <widget class="QWidget" name="layoutWidget2">
+       <layout class="QVBoxLayout" name="LverticalLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
         <item>
          <widget class="QLabel" name="label_2">
           <property name="text">
            <string>LocalDisks</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="leLocal">
+          <property name="frame">
+           <bool>true</bool>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -58,8 +91,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>816</width>
-     <height>23</height>
+     <width>1237</width>
+     <height>22</height>
     </rect>
    </property>
   </widget>
