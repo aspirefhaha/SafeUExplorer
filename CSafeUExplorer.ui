@@ -78,7 +78,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTreeView" name="tvLocalDisks"/>
+         <widget class="QTableWidget" name="twLocal"/>
         </item>
        </layout>
       </widget>
@@ -182,5 +182,42 @@
  <resources>
   <include location="safeuexplorer.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>tvGlobal</sender>
+   <signal>clicked(QModelIndex)</signal>
+   <receiver>CSafeUExplorer</receiver>
+   <slot>sltItemClicked(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>216</x>
+     <y>256</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>444</x>
+     <y>463</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>twLocal</sender>
+   <signal>doubleClicked(QModelIndex)</signal>
+   <receiver>CSafeUExplorer</receiver>
+   <slot>sltLocalItemClicked(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>849</x>
+     <y>412</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>821</x>
+     <y>466</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>sltItemClicked(QModelIndex)</slot>
+  <slot>sltLocalItemClicked(QModelIndex)</slot>
+ </slots>
 </ui>

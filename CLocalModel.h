@@ -76,26 +76,7 @@ public:
 		emit dataChanged(someindex,rbindex);
 	}
 
-	static QString covertHumanString(qlonglong orisize){
-		double ksize = orisize / 1024.0;
-		double msize = 0;
-		if(orisize>4096LL){
 
-			if(ksize > 1000){
-				msize = ksize / 1024;
-				double gsize = 0;
-				if(msize > 1000){
-					gsize = msize / 1024;
-					return QString::number(gsize) + " GB";
-				}
-				return QString::number(msize) + " MB";
-			}
-			else{
-				 return QString::number(ksize) + " KB";
-			}
-		}
-		return QString::number(orisize) + " B";
-	}
 
 public slots:
 

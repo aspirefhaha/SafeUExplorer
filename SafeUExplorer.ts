@@ -4,39 +4,35 @@
 <context>
     <name>CGlobalModel</name>
     <message>
-        <location filename="CGlobalModel.cpp" line="23"/>
+        <location filename="CGlobalModel.cpp" line="24"/>
         <source>SafeUDiskDataZone</source>
         <translation>安全U盘数据区</translation>
     </message>
     <message>
-        <location filename="CGlobalModel.cpp" line="234"/>
+        <location filename="CGlobalModel.cpp" line="276"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
     <message>
-        <location filename="CGlobalModel.cpp" line="236"/>
         <source>Size</source>
-        <translation>大小</translation>
+        <translation type="vanished">大小</translation>
     </message>
     <message>
-        <location filename="CGlobalModel.cpp" line="240"/>
         <source>Kind</source>
         <comment>Match OS X Finder</comment>
-        <translation>类型</translation>
+        <translation type="vanished">类型</translation>
     </message>
     <message>
-        <location filename="CGlobalModel.cpp" line="242"/>
         <source>Type</source>
         <comment>All other platforms</comment>
-        <translation>类型</translation>
+        <translation type="vanished">类型</translation>
     </message>
     <message>
-        <location filename="CGlobalModel.cpp" line="249"/>
         <source>Date Modified</source>
-        <translation>修改日期</translation>
+        <translation type="vanished">修改日期</translation>
     </message>
     <message>
-        <location filename="CGlobalModel.cpp" line="312"/>
+        <location filename="CGlobalModel.cpp" line="346"/>
         <source>File</source>
         <translation>文件</translation>
     </message>
@@ -133,6 +129,36 @@
         <location filename="CSafeUExplorer.ui" line="177"/>
         <source>Quit</source>
         <translation>退出</translation>
+    </message>
+    <message>
+        <location filename="CSafeUExplorer.cpp" line="40"/>
+        <source>Name</source>
+        <translation>名称</translation>
+    </message>
+    <message>
+        <location filename="CSafeUExplorer.cpp" line="40"/>
+        <source>Size</source>
+        <translation>大小</translation>
+    </message>
+    <message>
+        <location filename="CSafeUExplorer.cpp" line="40"/>
+        <source>Type</source>
+        <translation>类型</translation>
+    </message>
+    <message>
+        <location filename="CSafeUExplorer.cpp" line="40"/>
+        <source>Date Modified</source>
+        <translation>修改日期</translation>
+    </message>
+    <message>
+        <location filename="CSafeUExplorer.cpp" line="81"/>
+        <source>File</source>
+        <translation>文件</translation>
+    </message>
+    <message>
+        <location filename="CSafeUExplorer.cpp" line="86"/>
+        <source>Dir</source>
+        <translation>文件夹</translation>
     </message>
 </context>
 </TS>

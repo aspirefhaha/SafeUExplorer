@@ -32,7 +32,7 @@ public slots:
 	
 private:
     QList<FSPrivate *> m_rootDrives;
-//	QList<ExfatFSPrivate *> m_allItems;
+    QList<FSPrivate *> m_allItems;
 //	QString m_FSFileName;
 };
 

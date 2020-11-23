@@ -15,6 +15,7 @@
 #include "CFSPrivate.h"
 
 static bool needSDebug = false;
+static bool needCDebug = false;
 
 CGlobalModel::CGlobalModel(QObject *parent)
 	: QAbstractItemModel(parent)
@@ -36,6 +37,7 @@ CGlobalModel::CGlobalModel(QObject *parent)
         }
         pRootItem = new FSPrivate(FTLDRIVE,label,0,0,my_info.absolutePath(),NULL);
         m_rootDrives.append(pRootItem);
+        //m_allItems.append(pRootItem);
     }
 
 
@@ -59,33 +61,70 @@ CGlobalModel::~CGlobalModel()
         m_rootDrives.removeOne(item);
         //qDebug()<<"qlist.size()="<<m_rootDrives.size();
     }
-//    qDeleteAll(m_allItems);
+    qDeleteAll(m_allItems);
 }
 
 
 QModelIndex CGlobalModel::index(int row, int column,
                   const QModelIndex &parent) const
 {
-	//qDebug() << "call index with row" << row << " col " << column  << " parent row " << parent.row() << " column " << parent.column() ;
+    if(needCDebug)
+        qDebug() << "call index with row:" << row << " col:" << column  << " parent row:" << parent.row() << " col:" << parent.column() ;
 
 	if (!parent.isValid())
     {
+        if(needSDebug)
+            qDebug() << " parent invalid!!!!!!!!!!!";
         // 首层节点绑定关系
-        if (row < m_rootDrives.size() && row != -1)
-            return createIndex(row, column, m_rootDrives.at(row));
+        if (row < m_rootDrives.size() && row != -1){
+            FSPrivate * rootItem = m_rootDrives.at(row);
+            rootItem->m_col = column;
+            rootItem->m_row = row;
+            return createIndex(row, column, rootItem);
+        }
 		else
 			return QModelIndex();
     }
     else
     {
         // 其它层节点绑定关系
+        if(needSDebug)
+            qDebug() << "parent valid";
         if (parent.internalPointer() != nullptr)
         {
             FSPrivate * parentItemPtr = static_cast<FSPrivate *>(parent.internalPointer());
-			
-			QString childPath ;
+            if(needSDebug)
+                qDebug() << "parent abs:" << parentItemPtr->absPath;
+
             FSITEMTYPE childType = FTUNKNOWN;
-//			switch(parentItemPtr->fstype){
+            switch(parentItemPtr->fstype){
+              case FTLDIR:
+              case FTLDRIVE:
+                {
+
+                    QDir dir(parentItemPtr->absPath );
+                    dir.setFilter(QDir::Hidden | QDir::NoSymLinks | QDir::Dirs | QDir::NoDotAndDotDot);
+                    dir.setSorting(QDir::Time | QDir::Reversed);
+
+                    QFileInfoList finfolist =  dir.entryInfoList();
+                    QFileInfo fileinfo = finfolist.at(row);
+
+                    FSPrivate * newItem = nullptr;
+                    foreach(FSPrivate * olditem , m_allItems){
+                        if(fileinfo.absoluteFilePath() == olditem->absPath){
+                            newItem = olditem;
+                            break;
+                        }
+                    }
+                    if(newItem==nullptr){
+                        if(needCDebug)
+                            qDebug() << "create new item name " << fileinfo.fileName() << " with abs:" << fileinfo.absoluteFilePath();
+                        newItem = new FSPrivate(FTLDIR,fileinfo.fileName(),row,column,fileinfo.absoluteFilePath(),parentItemPtr);
+                        (const_cast<CGlobalModel*>(this))->m_allItems.append(newItem);
+                    }
+                    return createIndex(row,column,newItem);
+                }
+                break;
 //            case FTDRIVE:
 //				{
 //					//根据路径，row行数,返回绝对路径和类型
@@ -199,7 +238,7 @@ QModelIndex CGlobalModel::index(int row, int column,
 //				break;
 //			default:
 //				return QModelIndex();
-//			}
+            }
         }
     }
     return QModelIndex();
@@ -243,7 +282,8 @@ QVariant CGlobalModel::headerData(int section, Qt::Orientation orientation, int 
 QVariant CGlobalModel::data(const QModelIndex & index,
                                     int role ) const
 {
-    //qDebug() << "call data with row " << index.row() << " column " << index.column() << " role " << role ;
+    if(needSDebug)
+        qDebug() << "call data with row " << index.row() << " column " << index.column() << " role " << role ;
     if(!index.isValid())
     {
         return QVariant();
@@ -279,6 +319,7 @@ QVariant CGlobalModel::data(const QModelIndex & index,
 			}
 			break;
         case FTDIR:
+        case FTLDIR:
 			{
 				QIcon icon = icon_provider.icon(QFileIconProvider::Folder);
 				return QVariant(icon);
@@ -317,6 +358,7 @@ QVariant CGlobalModel::data(const QModelIndex & index,
 			}
 			break;
         case FTUSAFE:
+        case FTLDIR:
         case FTLDRIVE:
 			{
                 QString fslabel = selPtr->m_label;
@@ -334,15 +376,18 @@ QVariant CGlobalModel::data(const QModelIndex & index,
 
 QModelIndex CGlobalModel::parent(const QModelIndex &child) const
 {
-	//qDebug() << "call parent with cild  row " << child.row() << " column " << child.column() ;
+
     //* 如果是无效的节点则返回无效节点
 	if(!child.isValid())
 	{
-		//qDebug() << "no parent ";
+        if(needSDebug)
+            qDebug() << "call parent with child  row " << child.row() << " column " << child.column() << "no parent ";
 		return QModelIndex();
 	}
 
     FSPrivate* childData = static_cast<FSPrivate*>(child.internalPointer());
+    if(needSDebug)
+        qDebug() << "call parent with child  row " << child.row() << " column " << child.column() << "name:" << childData->absPath;
 	for(int i = 0; i < m_rootDrives.count(); i++)
 	{
 		if(m_rootDrives[i] == childData) //* 如果是父节点（分组）则返回无效父节点（分组没有父节点）
@@ -351,6 +396,14 @@ QModelIndex CGlobalModel::parent(const QModelIndex &child) const
 			return QModelIndex();
 		}
 	}
+    switch(childData->fstype){
+    case FTLDRIVE:
+        return QModelIndex();
+    case FTLDIR:
+    case FTLFILE:
+        return createIndex(childData->m_pParent->m_row, childData->m_pParent->m_col,childData->m_pParent);
+    }
+
 //	for(int i = 0; i<m_allItems.count();i++){
 //		FSPrivate* item = m_allItems[i];
 //		if(item == childData){
@@ -365,21 +418,6 @@ QModelIndex CGlobalModel::parent(const QModelIndex &child) const
 	//qDebug() << "no parent ";
 	return QModelIndex();
 }
-
-//void CLocalModel::refreshRootDevice()
-//{
-//	for(int i = 0; i < m_rootDrives.count(); i++)
-//	{
-//		FSPrivate * rootItem = m_rootDrives.at(i);
-//		if(rootItem->m_pexfatRoot){
-//			//TODO
-//            //exfat_unmount(rootItem->m_pexfatRoot);
-//			free(rootItem->m_pexfatRoot);
-//		}
-//	}
-//	m_rootDrives.clear();
-
-//}
 
 //bool CLocalModel::isRootItem(FSPrivate * priv) const
 //{
@@ -396,95 +434,48 @@ QModelIndex CGlobalModel::parent(const QModelIndex &child) const
 //}
 
 
-//void CLocalModel::addRootDevice(QString devname,FSITEMTYPE fstype)
-//{
-//	bool alreadyHas = false;
-//	QList<FSPrivate*>::iterator litem = m_rootDrives.begin();
-//	while(litem != m_rootDrives.end()){
-//		if((*litem)->match(devname, fstype)){
-//			alreadyHas = true;
-//			break;
-//		}
-//		litem++;
-//	}
-//	if(!alreadyHas){
-//		struct exfat * ef = (struct exfat * )malloc(sizeof(struct exfat));
-//		int mount_ret =  exfat_mount(ef, devname.toStdString().c_str(), "rw");
-//		if(mount_ret ==0){
-//			FSPrivate * newItem = new FSPrivate(devname,fstype,m_rootDrives.size(),0,NULL);
-//			newItem->m_pexfatRoot = ef;
-//			this->m_rootDrives.append(newItem);
-//			this->m_allItems.append(newItem);
-//		}
-//	}
-//}
+
 
 int CGlobalModel::rowCount(const QModelIndex &parent ) const
 {
     if(!parent.isValid()){
+        if(needSDebug)
+            qDebug() << "call rowCount of root is:" <<  m_rootDrives.size();
 		return m_rootDrives.size();
 	}
 	else{
         FSPrivate * parentData = static_cast<FSPrivate*>(parent.internalPointer());
+        if(needCDebug)
+            qDebug() << "call rowCount of " << parentData->absPath ;
 		switch(parentData->fstype ){
+        case FTLDIR:
         case FTLDRIVE:
-			{
-				int listsize = 0;
-//				int rc;
-//				struct exfat * ef = parentData->m_pexfatRoot;
-//				struct exfat_node * prootdir  = exfat_get_node(ef->root);
-//				struct exfat_node* node;
-//				if(needSDebug)
-//					OutputDebugString("in drive rowCount\n");
-//				do{
-//					struct exfat_iterator it;
-//					rc = exfat_opendir(ef, prootdir, &it);
-//					if (rc != 0)
-//						break;
-//					while ((node = exfat_readdir(&it)))
-//					{
-//						listsize++;
-//						exfat_put_node(ef, node);
-//					}
-//					exfat_closedir(ef, &it);
-//				}while(0);
-//				exfat_put_node(ef,prootdir);
-				return listsize;
+            {
+                QFileInfoList result;
+                QDir dir(parentData->absPath );
+                dir.setFilter(QDir::Hidden | QDir::NoSymLinks | QDir::Dirs | QDir::NoDotAndDotDot);
+                dir.setSorting(QDir::Time | QDir::Reversed);
+                if(needSDebug)
+                    qDebug() << "ask item " + parentData->absPath +  " children size : " << dir.entryInfoList().size();
+                return dir.entryInfoList().size();
 			}
+        case FTLFILE:
+            return 0;
+        case FTSPEC:
+            //TODO
+            return 0;
+        case FTUSAFE:
         case FTDIR:
 			{
+                //TODO
 				//根据输入的目录绝对地址，获取下级文件和文件夹的数量
 				int listsize = 0;
-				int rc;
-//				struct exfat * ef = parentData->m_pexfatRoot;
-//				struct exfat_node * pdir ;
-//				char utf8str[EXFAT_UTF8_NAME_BUFFER_MAX]={0};
-//				if(needSDebug)
-//					OutputDebugString("in dir rowCount\n");
-//				exfat_utf16_to_utf8(utf8str,(const le16_t *)parentData->absPath.data(),EXFAT_UTF8_NAME_BUFFER_MAX,parentData->absPath.length());
-//				rc = exfat_lookup(ef,&pdir,utf8str);
-//				if(rc!=0)
-//					return 0;
-//				struct exfat_node* node;
-//				do{
-//					struct exfat_iterator it;
-//					rc = exfat_opendir(ef, pdir, &it);
-//					if (rc != 0)
-//						break;
-//					while ((node = exfat_readdir(&it)))
-//					{
-//						listsize++;
-//						exfat_put_node(ef, node);
-//					}
-//					exfat_closedir(ef, &it);
-//				}while(0);
-//				exfat_put_node(ef,pdir);
-				
+                int rc;
                 return listsize;
-			}
-			break;
+            }
         case FTFILE:
 			return 0;
+        case FTUNKNOWN:
 		default:
 			return 0;
 		} 

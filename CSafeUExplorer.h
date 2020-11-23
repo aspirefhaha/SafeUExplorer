@@ -19,12 +19,19 @@ public:
     explicit CSafeUExplorer(QWidget *parent = 0);
     ~CSafeUExplorer();
 
+
+protected Q_SLOTS:
+    void sltItemClicked(QModelIndex);
+    void sltLocalItemClicked(QModelIndex);
+
 private:
     Ui::CSafeUExplorer *ui;
 
-    CLocalModel * m_pLocalModel;
+    //CLocalModel * m_pLocalModel;
     CLocalModel * m_pSafeUModel;
     CGlobalModel * m_pGlobalModel;
+
+    void refreshLocalFs(QString dirpath);
 };
 
 #endif // CSAFEUEXPLORER_H
