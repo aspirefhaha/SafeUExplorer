@@ -24,12 +24,34 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 RC_ICONS = udisk.ico
 
-SOURCES += \
+INCLUDEPATH += ../exfat_tf/libexfat
+
+LIBS += -lSdCryptoStor
+
+SOURCES +=  \
         CGlobalModel.cpp \
         CLocalModel.cpp \
         CommonTools.cpp \
         main.cpp \
-        CSafeUExplorer.cpp
+        CSafeUExplorer.cpp \
+        ../exfat_tf/libexfat/cluster.c \
+        ../exfat_tf/libexfat/io.c \
+        ../exfat_tf/libexfat/log.c \
+        ../exfat_tf/libexfat/lookup.c \
+        ../exfat_tf/libexfat/mount.c \
+        ../exfat_tf/libexfat/node.c \
+        ../exfat_tf/libexfat/repair.c \
+        ../exfat_tf/libexfat/time.c \
+        ../exfat_tf/libexfat/utf.c \
+        ../exfat_tf/libexfat/utils.c \
+        ../exfat_tf/mkfs/fat.c \
+        ../exfat_tf/mkfs/mkfs.c \
+        ../exfat_tf/mkfs/mkexfat.c \
+        ../exfat_tf/mkfs/rootdir.c \
+        ../exfat_tf/mkfs/uct.c \
+        ../exfat_tf/mkfs/uctc.c \
+        ../exfat_tf/mkfs/vbr.c \
+        ../exfat_tf/mkfs/cbm.c
 
 HEADERS += \
         CFSPrivate.h \
