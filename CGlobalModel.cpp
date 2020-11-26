@@ -102,27 +102,30 @@ QModelIndex CGlobalModel::index(int row, int column,
               case FTLDRIVE:
                 {
 
-                    QDir dir(parentItemPtr->absPath );
-                    dir.setFilter(QDir::Hidden | QDir::NoSymLinks | QDir::Dirs | QDir::NoDotAndDotDot);
-                    dir.setSorting(QDir::Time | QDir::Reversed);
+//                    QDir dir(parentItemPtr->absPath );
+//                    dir.setFilter(QDir::Hidden | QDir::NoSymLinks | QDir::Dirs | QDir::NoDotAndDotDot);
+//                    dir.setSorting(QDir::Time | QDir::Reversed);
 
-                    QFileInfoList finfolist =  dir.entryInfoList();
-                    QFileInfo fileinfo = finfolist.at(row);
+//                    QFileInfoList finfolist =  dir.entryInfoList();
+//                    QFileInfo fileinfo = finfolist.at(row);
 
-                    FSPrivate * newItem = nullptr;
-                    foreach(FSPrivate * olditem , m_allItems){
-                        if(fileinfo.absoluteFilePath() == olditem->absPath){
-                            newItem = olditem;
-                            break;
-                        }
+//                    FSPrivate * newItem = nullptr;
+//                    foreach(FSPrivate * olditem , m_allItems){
+//                        if(fileinfo.absoluteFilePath() == olditem->absPath){
+//                            newItem = olditem;
+//                            break;
+//                        }
+//                    }
+//                    if(newItem==nullptr){
+//                        if(needCDebug)
+//                            qDebug() << "create new item name " << fileinfo.fileName() << " with abs:" << fileinfo.absoluteFilePath();
+//                        newItem = new FSPrivate(FTLDIR,fileinfo.fileName(),row,column,fileinfo.absoluteFilePath(),parentItemPtr);
+//                        (const_cast<CGlobalModel*>(this))->m_allItems.append(newItem);
+//                    }
+                    if(parentItemPtr->m_lsChildren.isEmpty()){
+                        return QModelIndex();
                     }
-                    if(newItem==nullptr){
-                        if(needCDebug)
-                            qDebug() << "create new item name " << fileinfo.fileName() << " with abs:" << fileinfo.absoluteFilePath();
-                        newItem = new FSPrivate(FTLDIR,fileinfo.fileName(),row,column,fileinfo.absoluteFilePath(),parentItemPtr);
-                        (const_cast<CGlobalModel*>(this))->m_allItems.append(newItem);
-                    }
-                    return createIndex(row,column,newItem);
+                    return createIndex(row,column,parentItemPtr->m_lsChildren.at(row));
                 }
                 break;
 //            case FTDRIVE:
@@ -451,13 +454,31 @@ int CGlobalModel::rowCount(const QModelIndex &parent ) const
         case FTLDIR:
         case FTLDRIVE:
             {
+                if(!parentData->firsted){
+                    return parentData->m_lsChildren.size();
+                }
                 QFileInfoList result;
-                QDir dir(parentData->absPath );
+                QDir dir(parentData->absPath);
                 dir.setFilter(QDir::Hidden | QDir::NoSymLinks | QDir::Dirs | QDir::NoDotAndDotDot);
                 dir.setSorting(QDir::Time | QDir::Reversed);
                 if(needSDebug)
                     qDebug() << "ask item " + parentData->absPath +  " children size : " << dir.entryInfoList().size();
-                return dir.entryInfoList().size();
+                QFileInfoList finfolist =  dir.entryInfoList();
+                int row = 0;
+                foreach(QFileInfo fileinfo,finfolist){
+                    FSPrivate * newItem = nullptr;
+
+                    if(needCDebug)
+                        qDebug() << "create new item name " << fileinfo.fileName() << " with abs:" << fileinfo.absoluteFilePath();
+                    newItem = new FSPrivate(FTLDIR,fileinfo.fileName(),row,0,fileinfo.absoluteFilePath(),parentData);
+                    row++;
+                    (const_cast<CGlobalModel*>(this))->m_allItems.append(newItem);
+                    parentData->m_lsChildren.append(newItem);
+
+                }
+				parentData->firsted = false;
+                return parentData->m_lsChildren.size();
+
 			}
         case FTLFILE:
             return 0;

@@ -3,6 +3,7 @@
 
 #include "FsItemType.h"
 #include <QString>
+#include <QList>
 
 struct FSPrivate
 {
@@ -14,7 +15,8 @@ struct FSPrivate
     //struct exfat * m_pexfatRoot;
     FSPrivate * m_pParent;
 
-    //QList<ExfatFSPrivate *> m_lsChildren;
+    QList<FSPrivate *> m_lsChildren;
+	bool firsted;
 
     bool match(QString name,FSITEMTYPE fstype){
         return name==absPath && fstype==this->fstype;
@@ -27,6 +29,7 @@ struct FSPrivate
         ,m_pParent(parent)
         ,absPath(abspath)
         ,m_label(label)
+		, firsted(true)
         //,m_pexfatRoot(NULL)
     {
             if(parent!=NULL){
