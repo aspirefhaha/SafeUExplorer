@@ -47,11 +47,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTreeView" name="tvSafeUDisk">
-          <property name="lineWidth">
-           <number>1</number>
-          </property>
-         </widget>
+         <widget class="QTableWidget" name="twSafeUDisk"/>
         </item>
        </layout>
       </widget>
@@ -92,7 +88,7 @@
      <x>0</x>
      <y>0</y>
      <width>1237</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>

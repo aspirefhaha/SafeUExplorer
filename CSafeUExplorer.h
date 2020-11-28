@@ -23,6 +23,7 @@ public:
 protected Q_SLOTS:
     void sltItemClicked(QModelIndex);
     void sltLocalItemClicked(QModelIndex);
+    void sltRefresh(bool);
 
 private:
     Ui::CSafeUExplorer *ui;
@@ -31,7 +32,9 @@ private:
     CLocalModel * m_pSafeUModel;
     CGlobalModel * m_pGlobalModel;
 
-    void refreshLocalFs(QString dirpath);
+    void refreshLocalFs(QString &dirpath);
+	void refreshUDiskFs(QString &dirpath);
+	void findLocalItem(QString &abspath);
 };
 
 #endif // CSAFEUEXPLORER_H

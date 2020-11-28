@@ -7,7 +7,7 @@
 #include <QList>
 #include <QtCore>
 #include "CFSPrivate.h"
-
+extern "C" struct exfat;
 class CGlobalModel : public QAbstractItemModel
 {
 	Q_OBJECT
@@ -26,6 +26,8 @@ public:
 	void notifyChange(const QModelIndex & someindex,const QModelIndex &rbindex){
 		emit dataChanged(someindex,rbindex);
 	}
+	QModelIndex findLocalItem(QString &abspath);
+	struct exfat* ef;
 
 public slots:
 

@@ -1,3 +1,4 @@
+
 #include "CSafeUExplorer.h"
 #include <QApplication>
 #include <QTranslator>

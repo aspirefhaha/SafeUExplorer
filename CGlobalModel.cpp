@@ -1,7 +1,7 @@
 #ifdef UNICODE
 #undef UNICODE
 #endif
-
+#include "exfat.h"
 #include "CGlobalModel.h"
 #include <QImage>
 #include <QDir>
@@ -21,8 +21,12 @@ CGlobalModel::CGlobalModel(QObject *parent)
 	: QAbstractItemModel(parent)
 {
     //QStringList resultDriversName;
-    FSPrivate * pRootItem = new FSPrivate(FTUSAFE,tr("SafeUDiskDataZone"),0,0,"/",NULL);
+
+	ef = new (struct exfat);
+	exfat_mount(ef, "nothing", "rw");
+    FSPrivate * pRootItem = new FSPrivate(FTUSAFE,tr("SafeUDiskDataZone"),0,0,"/",NULL,ef);
     m_rootDrives.append(pRootItem);
+	m_allItems.append(pRootItem);
     foreach (QFileInfo my_info, QDir::drives())
     {
         //resultDriversName.push_back(my_info.absolutePath());
@@ -37,7 +41,7 @@ CGlobalModel::CGlobalModel(QObject *parent)
         }
         pRootItem = new FSPrivate(FTLDRIVE,label,0,0,my_info.absolutePath(),NULL);
         m_rootDrives.append(pRootItem);
-        //m_allItems.append(pRootItem);
+        m_allItems.append(pRootItem);
     }
 
 
@@ -62,6 +66,10 @@ CGlobalModel::~CGlobalModel()
         //qDebug()<<"qlist.size()="<<m_rootDrives.size();
     }
     qDeleteAll(m_allItems);
+	if (ef && ef->dev) {
+		exfat_unmount(ef);
+	}
+	delete ef;
 }
 
 
@@ -100,147 +108,17 @@ QModelIndex CGlobalModel::index(int row, int column,
             switch(parentItemPtr->fstype){
               case FTLDIR:
               case FTLDRIVE:
+			  case FTDIR:
+			  case FTUSAFE:
                 {
-
-//                    QDir dir(parentItemPtr->absPath );
-//                    dir.setFilter(QDir::Hidden | QDir::NoSymLinks | QDir::Dirs | QDir::NoDotAndDotDot);
-//                    dir.setSorting(QDir::Time | QDir::Reversed);
-
-//                    QFileInfoList finfolist =  dir.entryInfoList();
-//                    QFileInfo fileinfo = finfolist.at(row);
-
-//                    FSPrivate * newItem = nullptr;
-//                    foreach(FSPrivate * olditem , m_allItems){
-//                        if(fileinfo.absoluteFilePath() == olditem->absPath){
-//                            newItem = olditem;
-//                            break;
-//                        }
-//                    }
-//                    if(newItem==nullptr){
-//                        if(needCDebug)
-//                            qDebug() << "create new item name " << fileinfo.fileName() << " with abs:" << fileinfo.absoluteFilePath();
-//                        newItem = new FSPrivate(FTLDIR,fileinfo.fileName(),row,column,fileinfo.absoluteFilePath(),parentItemPtr);
-//                        (const_cast<CGlobalModel*>(this))->m_allItems.append(newItem);
-//                    }
                     if(parentItemPtr->m_lsChildren.isEmpty()){
                         return QModelIndex();
                     }
                     return createIndex(row,column,parentItemPtr->m_lsChildren.at(row));
                 }
                 break;
-//            case FTDRIVE:
-//				{
-//					//根据路径，row行数,返回绝对路径和类型
-//					char lpPath[EXFAT_UTF8_NAME_BUFFER_MAX] = {0};
-//					struct exfat * ef = parentItemPtr->m_pexfatRoot;
-//					struct exfat_node * pparentnode = exfat_get_node(ef->root);
-//					struct exfat_node * node = NULL;
-//					int rc =  0;
-//					int searchidx = 0;
-//					if(pparentnode != NULL){
-//						struct exfat_iterator it;
-//						rc = exfat_opendir(ef, pparentnode, &it);
-//						if (rc != 0)
-//							break;
-//						while ((node = exfat_readdir(&it)))
-//						{
-//							if(row == searchidx){
-//								if(node->attrib & EXFAT_ATTRIB_DIR){
-//									childType = EXFTDIR;
-									
-//								}
-//								else {
-//									childType = EXFTFILE;
-//								}
-//								int len = exfat_utf16_length((const le16_t *)&node->name);
-//								childPath = QString("/") +QString::fromUtf16((const  unsigned short *)&node->name,len);
-
-//								exfat_put_node(ef, node);
-//								break;
-//							}
-//							exfat_put_node(ef, node);
-//							searchidx++;
-//						}
-//						exfat_closedir(ef, &it);
-//						exfat_put_node(ef,pparentnode);
-//						if(childType != EXFTUNKNOWN){
-//							FSPrivate * pFind = NULL;
-//							pFind = findOutFSChild(childPath,childType);
-//							if(pFind == NULL){
-//								pFind = new FSPrivate(childPath,childType,row,column,parentItemPtr);
-//                                (const_cast<CLocalModel*>(this))->m_allItems.append(pFind);
-//							}
-//							return createIndex(row,column,pFind);
-//						}
-
-//					}
-
-					
-
-//				}
-//				break;
-//            case FTDIR:
-//				{
-//					//根据路径，row行数,返回绝对路径和类型
-//					char lpPath[EXFAT_UTF8_NAME_BUFFER_MAX] = {0};
-//					int len = 0;
-//					struct exfat_node * pparentnode = NULL;
-//					struct exfat * ef = parentItemPtr->m_pexfatRoot;
-//					struct exfat_node * node = NULL;
-//					int rc = 0;
-//					int searchidx = 0;
-//					exfat_utf16_to_utf8(lpPath,(const le16_t *)parentItemPtr->absPath.data(),EXFAT_UTF8_NAME_BUFFER_MAX,parentItemPtr->absPath.length());
-//					rc = exfat_lookup(ef,&pparentnode,lpPath);
-					
-//					if(rc == 0){
-//						struct exfat_iterator it;
-//						rc = exfat_opendir(ef, pparentnode, &it);
-//						if (rc != 0)
-//							break;
-//						while ((node = exfat_readdir(&it)))
-//						{
-//							if(row == searchidx){
-//								int len = exfat_utf16_length((const le16_t *)&node->name);
-//								QString filename = QString::fromUtf16((const  unsigned short *)&node->name,len);
-//								if(node->attrib & EXFAT_ATTRIB_DIR){
-//									childType = EXFTDIR;
-//								}
-//								else
-//									childType = EXFTFILE;
-
-//								childPath = parentItemPtr->absPath + "/" + filename ;//+
-
-//								exfat_put_node(ef, node);
-//								break;
-//							}
-//							exfat_put_node(ef, node);
-//							searchidx++;
-//						}
-//						exfat_closedir(ef, &it);
-//						exfat_put_node(ef,pparentnode);
-//						if(childType != EXFTUNKNOWN){
-//							FSPrivate * pFind = NULL;
-//							pFind = findOutFSChild(childPath,childType);
-//							if(pFind == NULL){
-//								pFind = new FSPrivate(childPath,childType,row,column,parentItemPtr);
-//                                (const_cast<CLocalModel*>(this))->m_allItems.append(pFind);
-//							}
-//							return createIndex(row,column,pFind);
-//						}
-
-//					}
-
-					
-
-//				}
-//				break;
-//            case FTFILE:
-//				{
-//					return QModelIndex();
-//				}
-//				break;
-//			default:
-//				return QModelIndex();
+			default:
+				return QModelIndex();
             }
         }
     }
@@ -338,29 +216,10 @@ QVariant CGlobalModel::data(const QModelIndex & index,
         QString fspath = selPtr->absPath;
 		//qDebug() << "want display " << fspath << " type" << fstype << " row " << index.row() << " column " << index.column() << " parent" << index.parent();
 		switch(fstype){
-        case FTDIR:
         case FTFILE:
-			{
-				//获取fspath文件的文件名、大小、类型、最后修改时间
-
-				QString filename = selPtr->absPath;
-//				struct exfat_node * node;
-				QString filesize = "0";
-				QString filetype = tr("File");
-				QString filelastmodifytime = "1980-01-01 00::00::00";
-
-				switch(index.column()){
-				case 0:
-					return QVariant(filename);
-					break;
-
-				default:
-                    qDebug() << "!!!!!!!!!!!should not here!!!!!!!!!!!!!!";
-					break;
-				}
-			}
 			break;
         case FTUSAFE:
+		case FTDIR:
         case FTLDIR:
         case FTLDRIVE:
 			{
@@ -401,9 +260,12 @@ QModelIndex CGlobalModel::parent(const QModelIndex &child) const
 	}
     switch(childData->fstype){
     case FTLDRIVE:
+	case FTUSAFE:
         return QModelIndex();
     case FTLDIR:
     case FTLFILE:
+	case FTDIR:
+
         return createIndex(childData->m_pParent->m_row, childData->m_pParent->m_col,childData->m_pParent);
     }
 
@@ -422,23 +284,20 @@ QModelIndex CGlobalModel::parent(const QModelIndex &child) const
 	return QModelIndex();
 }
 
-//bool CLocalModel::isRootItem(FSPrivate * priv) const
-//{
-//	bool isrootitem = false;
-//	QList<FSPrivate*>::const_iterator litem = m_rootDrives.begin();
-//	while(litem != m_rootDrives.end()){
-//		if((*litem)->match(priv->absPath, priv->fstype)){
-//			isrootitem = true;
-//			break;
-//		}
-//		litem++;
-//	}
-//	return isrootitem;
-//}
-
-
-
-
+QModelIndex CGlobalModel::findLocalItem(QString &abspath)
+{
+	//TODO
+	int allcount = m_allItems.count();
+	FSPrivate * item = NULL;
+	bool foundone = false;
+	for (int i = 0; i < allcount; i++) {
+		item = m_allItems.at(i);
+		if (item->absPath == abspath) {
+			break;
+		}
+	}
+	return QModelIndex();
+}
 int CGlobalModel::rowCount(const QModelIndex &parent ) const
 {
     if(!parent.isValid()){
@@ -486,13 +345,85 @@ int CGlobalModel::rowCount(const QModelIndex &parent ) const
             //TODO
             return 0;
         case FTUSAFE:
+			{
+				int listsize = 0;
+				int rc;
+				struct exfat_node * prootdir = exfat_get_node(ef->root);
+				struct exfat_node* node;
+
+				if (!parentData->firsted) {
+					return parentData->m_lsChildren.size();
+				}
+				do {
+					struct exfat_iterator it;
+					parentData->firsted = false;
+					rc = exfat_opendir(ef, prootdir, &it);
+					if (rc != 0)
+						break;
+					while ((node = exfat_readdir(&it)))
+					{
+						if (node->attrib & EXFAT_ATTRIB_DIR) {
+							FSPrivate * newItem = nullptr;
+							int len = exfat_utf16_length((const le16_t *)&node->name);
+							QString dirname = QString::fromUtf16((const  unsigned short *)&node->name, len);
+							QString absname = "/" + dirname;
+							if (needCDebug)
+								qDebug() << "create new item name " << dirname  << " with abs:" << absname;
+							newItem = new FSPrivate(FTDIR, dirname, listsize++, 0, absname, parentData);
+							(const_cast<CGlobalModel*>(this))->m_allItems.append(newItem);
+							parentData->m_lsChildren.append(newItem);
+							listsize++;
+						}
+						exfat_put_node(ef, node);
+					}
+					exfat_closedir(ef, &it);
+				} while (0);
+				exfat_put_node(ef, prootdir);
+				return listsize;
+			}
         case FTDIR:
 			{
-                //TODO
 				//根据输入的目录绝对地址，获取下级文件和文件夹的数量
 				int listsize = 0;
-                int rc;
-                return listsize;
+				int rc;
+				struct exfat_node * pdir;
+				char utf8str[EXFAT_UTF8_NAME_BUFFER_MAX] = { 0 };
+				if (!parentData->firsted) {
+					return parentData->m_lsChildren.size();
+				}
+				parentData->firsted = false;
+				exfat_utf16_to_utf8(utf8str, (const le16_t *)parentData->absPath.data(), EXFAT_UTF8_NAME_BUFFER_MAX, parentData->absPath.length());
+				rc = exfat_lookup(ef, &pdir, utf8str);
+				if (rc != 0)
+					return 0;
+				struct exfat_node* node;
+				FSPrivate * newItem = nullptr;
+				do {
+					struct exfat_iterator it;
+					rc = exfat_opendir(ef, pdir, &it);
+					if (rc != 0)
+						break;
+					while ((node = exfat_readdir(&it)))
+					{
+						if (node->attrib & EXFAT_ATTRIB_DIR) {
+							int len = exfat_utf16_length((const le16_t *)&node->name);
+							QString dirname = QString::fromUtf16((const  unsigned short *)&node->name, len);
+							QString absname = parentData->absPath + "/" + dirname;
+							if (needCDebug)
+								qDebug() << "create new item name " << dirname << " with abs:" << absname;
+							newItem = new FSPrivate(FTDIR, dirname, listsize++, 0, absname, parentData);
+							(const_cast<CGlobalModel*>(this))->m_allItems.append(newItem);
+							parentData->m_lsChildren.append(newItem);
+							listsize++;
+						}
+						exfat_put_node(ef, node);
+					}
+					exfat_closedir(ef, &it);
+				} while (0);
+				exfat_put_node(ef, pdir);
+
+				return listsize; 
+				
             }
         case FTFILE:
 			return 0;
