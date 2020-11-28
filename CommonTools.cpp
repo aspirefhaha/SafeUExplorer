@@ -56,12 +56,12 @@ QString covertHumanString(qlonglong orisize){
             double gsize = 0;
             if(msize > 1000){
                 gsize = msize / 1024;
-                return QString::number(gsize) + " GB";
+                return QString::number(gsize,'f',2) + " GB";
             }
-            return QString::number(msize) + " MB";
+            return QString::number(msize,'f',2) + " MB";
         }
         else{
-             return QString::number(ksize) + " KB";
+             return QString::number(ksize,'f',2) + " KB";
         }
     }
     return QString::number(orisize) + " B";

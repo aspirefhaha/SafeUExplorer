@@ -211,9 +211,26 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>twSafeUDisk</sender>
+   <signal>doubleClicked(QModelIndex)</signal>
+   <receiver>CSafeUExplorer</receiver>
+   <slot>sltUDiskItemClicked(QModelIndex)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>778</x>
+     <y>389</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>903</x>
+     <y>462</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>sltItemClicked(QModelIndex)</slot>
   <slot>sltLocalItemClicked(QModelIndex)</slot>
+  <slot>sltUDiskItemClicked(QModelIndex)</slot>
  </slots>
 </ui>

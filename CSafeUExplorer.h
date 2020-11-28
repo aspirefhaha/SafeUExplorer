@@ -4,7 +4,6 @@
 #include <QMainWindow>
 #include <QActionGroup>
 #include <QToolBar>
-#include "CLocalModel.h"
 #include "CGlobalModel.h"
 
 namespace Ui {
@@ -23,13 +22,16 @@ public:
 protected Q_SLOTS:
     void sltItemClicked(QModelIndex);
     void sltLocalItemClicked(QModelIndex);
+	void sltUDiskItemClicked(QModelIndex);
     void sltRefresh(bool);
+	void sltDesktop(bool);
+	void sltQuit(bool);
 
 private:
     Ui::CSafeUExplorer *ui;
 
     //CLocalModel * m_pLocalModel;
-    CLocalModel * m_pSafeUModel;
+    //CLocalModel * m_pSafeUModel;
     CGlobalModel * m_pGlobalModel;
 
     void refreshLocalFs(QString &dirpath);

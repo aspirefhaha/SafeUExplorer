@@ -348,6 +348,9 @@ int CGlobalModel::rowCount(const QModelIndex &parent ) const
 			{
 				int listsize = 0;
 				int rc;
+				if (ef->dev == NULL) {
+					return 0;
+				}
 				struct exfat_node * prootdir = exfat_get_node(ef->root);
 				struct exfat_node* node;
 
@@ -366,7 +369,7 @@ int CGlobalModel::rowCount(const QModelIndex &parent ) const
 							FSPrivate * newItem = nullptr;
 							int len = exfat_utf16_length((const le16_t *)&node->name);
 							QString dirname = QString::fromUtf16((const  unsigned short *)&node->name, len);
-							QString absname = "/" + dirname;
+							QString absname = parentData->absPath + dirname ;
 							if (needCDebug)
 								qDebug() << "create new item name " << dirname  << " with abs:" << absname;
 							newItem = new FSPrivate(FTDIR, dirname, listsize++, 0, absname, parentData);
@@ -408,7 +411,7 @@ int CGlobalModel::rowCount(const QModelIndex &parent ) const
 						if (node->attrib & EXFAT_ATTRIB_DIR) {
 							int len = exfat_utf16_length((const le16_t *)&node->name);
 							QString dirname = QString::fromUtf16((const  unsigned short *)&node->name, len);
-							QString absname = parentData->absPath + "/" + dirname;
+							QString absname = parentData->absPath + "/" +  dirname ;
 							if (needCDebug)
 								qDebug() << "create new item name " << dirname << " with abs:" << absname;
 							newItem = new FSPrivate(FTDIR, dirname, listsize++, 0, absname, parentData);
