@@ -8,6 +8,9 @@
 #include <QFileIconProvider>
 #include <QIcon>
 #include <QDir>
+#include <QDebug>
+#include "CopyItem.h"
+#include "CopyDlg.h"
 
 #define SIZECOLWIDTH 70
 #define NAMECOLWIDTH 200
@@ -15,7 +18,8 @@
 
 CSafeUExplorer::CSafeUExplorer(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::CSafeUExplorer)
+    ui(new Ui::CSafeUExplorer),
+	copyThread(this)
 {
     ui->setupUi(this);
 
@@ -82,13 +86,26 @@ CSafeUExplorer::CSafeUExplorer(QWidget *parent) :
     ui->twSafeUDisk->setSelectionBehavior(QAbstractItemView::SelectRows);
 	ui->twSafeUDisk->show();
 
+    connect(ui->twSafeUDisk, SIGNAL(startDrag()), this, SLOT(sltUDiskStartDrag()));
+    connect(ui->twLocal, SIGNAL(startDrag()), this , SLOT(sltLocalStartDrag()));
+	connect(ui->twLocal, SIGNAL(acceptItemList(QList<int>)), this, SLOT(sltAcceptUDiskItemList(QList<int>)));
+	connect(ui->twSafeUDisk, SIGNAL(acceptItemList(QList<int>)), this, SLOT(sltAcceptLocalItemList(QList<int>)));
+
     connect(ui->actionRefresh,SIGNAL(triggered(bool)),this,SLOT(sltRefresh(bool)));
 	connect(ui->actionDesktop, SIGNAL(triggered(bool)), this, SLOT(sltDesktop(bool)));
 	connect(ui->actionQuit, SIGNAL(triggered(bool)), this, SLOT(sltQuit(bool)));
 
+	connect(&copyThread, SIGNAL(total(int, qint64)), &copyDlg, SLOT(setTotal(int, qint64)));
+	connect(&copyThread, SIGNAL(curFinished(qint64, int)), &copyDlg, SLOT(setCurPos(qint64, int)));
+	connect(&copyThread, SIGNAL(curItem(QString, QString)), &copyDlg, SLOT(setCurItem(QString, QString)));
+	connect(&copyThread, SIGNAL(copyFinished()), &copyDlg, SLOT(sltQuit()));
+	
+	connect(&copyDlg, SIGNAL(wantQuit()), this, SLOT(sltWantCancelCopy()));
+
     if(m_pGlobalModel->ef && m_pGlobalModel->ef->dev){
         QString udiskrootdir = "/";
         refreshUDiskFs(udiskrootdir);
+		copyThread.ef = m_pGlobalModel->ef;
     }
 
     QString localDesktop = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
@@ -103,6 +120,15 @@ void CSafeUExplorer::sltDesktop(bool checked)
 	refreshLocalFs(localDesktop);
 }
 
+void CSafeUExplorer::sltLocalStartDrag()
+{
+    ui->twSafeUDisk->setAcceptDrops(true);
+}
+void CSafeUExplorer::sltUDiskStartDrag()
+{
+    ui->twLocal->setAcceptDrops(true);
+}
+
 
 void CSafeUExplorer::sltQuit(bool checked)
 {
@@ -114,6 +140,66 @@ void CSafeUExplorer::sltRefresh(bool checked)
 	Q_UNUSED(checked)
 	qDebug() << "refresh";
 }
+
+void CSafeUExplorer::sltAcceptLocalItemList(QList<int> list)
+{
+	qDebug() << "Copy to UDisk";
+	copyThread.copyItems.clear();
+	for (auto row : list) {
+		//qDebug() << row;
+		QTableWidgetItem * item = ui->twLocal->item(row, 0);
+		qDebug() << item->data(Qt::UserRole).toString();
+		CopyItem copyItem;
+		copyItem.source = item->data(Qt::UserRole).toString();
+		copyItem.sourceType = FTLDRIVE;
+		copyItem.sourceDir = ui->leLocal->text();
+		copyItem.size = 0;
+		copyItem.targetDir = ui->leUDisk->text();
+		copyItem.targetType = FTUSAFE;
+		copyThread.copyItems.append(copyItem);
+	}
+	copyThread.m_bQuit = false;
+
+	copyDlg.init();
+	copyThread.start();
+	copyDlg.setModal(true);
+	copyDlg.exec();
+	refreshUDiskFs(ui->leUDisk->text());
+}
+
+
+void CSafeUExplorer::sltAcceptUDiskItemList(QList<int> list)
+{
+	qDebug() << "Copy to Local";
+	copyThread.copyItems.clear();
+	for (auto row : list) {
+		//qDebug() << row;
+		QTableWidgetItem * item = ui->twSafeUDisk->item(row, 0);
+		qDebug() << item->data(Qt::UserRole).toString();
+		CopyItem copyItem;
+		copyItem.source = item->data(Qt::UserRole).toString();
+		copyItem.sourceType = FTUSAFE;
+		copyItem.sourceDir = ui->leUDisk->text();
+		copyItem.size = 0;
+		copyItem.targetDir = ui->leLocal->text();
+		copyItem.targetType = FTLDRIVE;
+		copyThread.copyItems.append(copyItem);
+	}
+	copyThread.m_bQuit = false;
+	copyThread.start();
+	copyDlg.init();
+	copyDlg.setModal(true);
+	copyDlg.exec();
+	refreshLocalFs(ui->leLocal->text());
+}
+
+void CSafeUExplorer::sltWantCancelCopy()
+{
+	copyThread.try_quit();
+	copyThread.wait();
+	copyDlg.sltQuit();
+}
+
 
 void CSafeUExplorer::sltItemClicked(QModelIndex index)
 {
@@ -263,6 +349,7 @@ void CSafeUExplorer::refreshLocalFs(QString &dirpath)
     foreach(QFileInfo fileinfo,finfolist){
         if(!fileinfo.isDir()){
             col1Item = new QTableWidgetItem(icon_provider.icon(QFileIconProvider::File),fileinfo.fileName());
+			col1Item->setData(Qt::UserRole, fileinfo.absoluteFilePath());
             ui->twLocal->setItem(j,0,col1Item);
             QTableWidgetItem * sizeItem = new QTableWidgetItem(covertHumanString(fileinfo.size()));
             sizeItem->setTextAlignment(Qt::AlignRight|Qt::AlignVCenter);
@@ -307,13 +394,19 @@ void CSafeUExplorer::sltLocalItemClicked(QModelIndex index)
     {
         return;
     }
-    
+	QFileInfo fileinfo(absPath);
+	if (!fileinfo.isDir())
+		return;
     refreshLocalFs(absPath);
 	//findLocalItem(absPath);
 }
 
 CSafeUExplorer::~CSafeUExplorer()
 {
+	if (copyThread.isRunning()) {
+		copyThread.try_quit();
+		copyThread.wait();
+	}
     delete ui;
 }
 

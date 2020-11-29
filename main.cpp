@@ -1,4 +1,5 @@
 
+#include "exfat.h"
 #include "CSafeUExplorer.h"
 #include <QApplication>
 #include <QTranslator>

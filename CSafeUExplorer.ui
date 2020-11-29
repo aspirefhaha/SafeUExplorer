@@ -47,7 +47,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTableWidget" name="twSafeUDisk"/>
+         <widget class="UDiskFileTableWidget" name="twSafeUDisk"/>
         </item>
        </layout>
       </widget>
@@ -74,7 +74,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTableWidget" name="twLocal"/>
+         <widget class="FileTableWidget" name="twLocal"/>
         </item>
        </layout>
       </widget>
@@ -88,7 +88,7 @@
      <x>0</x>
      <y>0</y>
      <width>1237</width>
-     <height>23</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
@@ -175,6 +175,18 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>FileTableWidget</class>
+   <extends>QTableWidget</extends>
+   <header>FileTableWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>UDiskFileTableWidget</class>
+   <extends>QTableWidget</extends>
+   <header>UDiskFileTableWidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="safeuexplorer.qrc"/>
  </resources>

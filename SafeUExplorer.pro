@@ -29,9 +29,13 @@ INCLUDEPATH += ../exfat_tf/libexfat
 LIBS += -lSdCryptoStor
 
 SOURCES +=  \
+        BGCopyThread.cpp \
         CGlobalModel.cpp \
         CLocalModel.cpp \
         CommonTools.cpp \
+        CopyDlg.cpp \
+        FileTableWidget.cpp \
+        UDiskFileTableWidget.cpp \
         main.cpp \
         CSafeUExplorer.cpp \
         ../exfat_tf/libexfat/cluster.c \
@@ -54,15 +58,21 @@ SOURCES +=  \
         ../exfat_tf/mkfs/cbm.c
 
 HEADERS += \
+        BGCopyThread.h \
         CFSPrivate.h \
         CGlobalModel.h \
         CLocalModel.h \
         CSafeUExplorer.h \
         CommonTools.h \
-        FsItemType.h
+        CopyDlg.h \
+        CopyItem.h \
+        FileTableWidget.h \
+        FsItemType.h \
+        UDiskFileTableWidget.h
 
 FORMS += \
-        CSafeUExplorer.ui
+        CSafeUExplorer.ui \
+        CopyDlg.ui
 
 RESOURCES += \
     safeuexplorer.qrc
