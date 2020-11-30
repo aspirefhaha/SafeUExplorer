@@ -120,6 +120,8 @@ void BGCopyThread::run()
 	m_TotalCount = 0;
 	realItems.clear();
 	qDebug() << "calculating...";
+	if (ef == NULL || ef->dev == NULL)
+		m_bQuit = true;
 	if (!m_bQuit) {
 		foreach(auto copyitem, copyItems) {
 			if (copyitem.sourceType == FTLDRIVE) {

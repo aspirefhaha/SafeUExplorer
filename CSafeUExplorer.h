@@ -33,12 +33,11 @@ protected Q_SLOTS:
 	void sltAcceptLocalItemList(QList<int> list);
 	void sltAcceptUDiskItemList(QList<int> list);
 	void sltWantCancelCopy();
+	void sltFormat(bool);
 
 private:
     Ui::CSafeUExplorer *ui;
 
-    //CLocalModel * m_pLocalModel;
-    //CLocalModel * m_pSafeUModel;
     CGlobalModel * m_pGlobalModel;
 
     void refreshLocalFs(QString &dirpath);

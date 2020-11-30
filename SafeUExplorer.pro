@@ -25,11 +25,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 RC_ICONS = udisk.ico
 
 INCLUDEPATH += ../exfat_tf/libexfat
+INCLUDEPATH += ../exfat_tf/mkfs
 
 LIBS += -lSdCryptoStor
 
 SOURCES +=  \
         BGCopyThread.cpp \
+        CFormatDlg.cpp \
         CGlobalModel.cpp \
         CLocalModel.cpp \
         CommonTools.cpp \
@@ -60,6 +62,7 @@ SOURCES +=  \
 HEADERS += \
         BGCopyThread.h \
         CFSPrivate.h \
+        CFormatDlg.h \
         CGlobalModel.h \
         CLocalModel.h \
         CSafeUExplorer.h \
@@ -71,6 +74,7 @@ HEADERS += \
         UDiskFileTableWidget.h
 
 FORMS += \
+        CFormatDlg.ui \
         CSafeUExplorer.ui \
         CopyDlg.ui
 

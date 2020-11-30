@@ -11,6 +11,9 @@
 #include <QDebug>
 #include "CopyItem.h"
 #include "CopyDlg.h"
+#include <QMessageBox>
+#include "CFormatDlg.h"
+#include "mkexfat.h"
 
 #define SIZECOLWIDTH 70
 #define NAMECOLWIDTH 200
@@ -94,6 +97,7 @@ CSafeUExplorer::CSafeUExplorer(QWidget *parent) :
     connect(ui->actionRefresh,SIGNAL(triggered(bool)),this,SLOT(sltRefresh(bool)));
 	connect(ui->actionDesktop, SIGNAL(triggered(bool)), this, SLOT(sltDesktop(bool)));
 	connect(ui->actionQuit, SIGNAL(triggered(bool)), this, SLOT(sltQuit(bool)));
+	connect(ui->actionFormatUDisk, SIGNAL(triggered(bool)), this, SLOT(sltFormat(bool)));
 
 	connect(&copyThread, SIGNAL(total(int, qint64)), &copyDlg, SLOT(setTotal(int, qint64)));
 	connect(&copyThread, SIGNAL(curFinished(qint64, int)), &copyDlg, SLOT(setCurPos(qint64, int)));
@@ -111,6 +115,51 @@ CSafeUExplorer::CSafeUExplorer(QWidget *parent) :
     QString localDesktop = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     refreshLocalFs(localDesktop);
 
+}
+
+void CSafeUExplorer::sltFormat(bool)
+{
+	if (QMessageBox::Yes == QMessageBox::warning(this, tr("Data Lost Warning"), tr("Format Fs will Lost All Data in both Normal and Hide Partition,Continue?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes)) {
+		ui->twSafeUDisk->clearContents();
+		ui->twSafeUDisk->setRowCount(0);
+		if (m_pGlobalModel->ef && m_pGlobalModel->ef->dev) {
+			exfat_unmount(m_pGlobalModel->ef);
+			m_pGlobalModel->ef->dev = NULL;
+		}
+		CFormatDlg formatDlg;
+		formatDlg.setModal(true);
+		if (formatDlg.exec() == QDialog::Accepted) {
+
+			if (QMessageBox::Yes == QMessageBox::warning(this, tr("Unplug and Plug Again"), tr("Hide Partition Format Fs Need Unplug and Plug TF Card Again,Then Press Yes"), QMessageBox::Yes, QMessageBox::Yes)) {
+				format_fs();
+				if (0 == exfat_mount(m_pGlobalModel->ef, "nothing", "rw")) {
+					if (m_pGlobalModel->ef && m_pGlobalModel->ef->dev) {
+						QString rootDir = "/";
+						refreshUDiskFs(rootDir);
+						QMessageBox::information(this, tr("Succeed"), tr("Partition and Format Operation Succeed!"), QMessageBox::Yes, QMessageBox::Yes);
+					}
+				}
+				else {
+					QMessageBox::warning(this, tr("Format Failed"), tr("Format Cancelled,Only Normal Partition Could be Used!"), QMessageBox::Yes, QMessageBox::Yes);
+				}
+			}
+			else {
+				QMessageBox::warning(this, tr("Format Failed"), tr("Format Cancelled,Only Normal Partition Could be Used!"), QMessageBox::Yes, QMessageBox::Yes);
+
+			}
+		}
+		else {
+			if (0 == exfat_mount(m_pGlobalModel->ef, "nothing", "rw")) {
+				if (m_pGlobalModel->ef && m_pGlobalModel->ef->dev) {
+					QString rootDir = "/";
+					refreshUDiskFs(rootDir);
+				}
+			}
+		}
+
+		
+	}
+	
 }
 
 void CSafeUExplorer::sltDesktop(bool checked)
@@ -143,7 +192,7 @@ void CSafeUExplorer::sltRefresh(bool checked)
 
 void CSafeUExplorer::sltAcceptLocalItemList(QList<int> list)
 {
-	qDebug() << "Copy to UDisk";
+	//qDebug() << "Copy to UDisk";
 	copyThread.copyItems.clear();
 	for (auto row : list) {
 		//qDebug() << row;
@@ -170,7 +219,7 @@ void CSafeUExplorer::sltAcceptLocalItemList(QList<int> list)
 
 void CSafeUExplorer::sltAcceptUDiskItemList(QList<int> list)
 {
-	qDebug() << "Copy to Local";
+	//qDebug() << "Copy to Local";
 	copyThread.copyItems.clear();
 	for (auto row : list) {
 		//qDebug() << row;
