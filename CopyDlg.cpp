@@ -49,7 +49,7 @@ void CopyDlg::sltQuit()
 void CopyDlg::setTotal(int total, qint64 totalsize)
 {
 	m_TotalCount = total;
-	ui->lbTotal->setText(tr("Total %1 Current %2").arg(total).arg(0));
+	ui->lbTotal->setText(tr("Total %1 Finished %2").arg(total).arg(0));
 	ui->pbTotal->setRange(0, total);
 	ui->pbTotal->setValue(0);
 	ui->pbCurItem->setRange(0, 100);
@@ -60,8 +60,13 @@ void CopyDlg::setTotal(int total, qint64 totalsize)
 void CopyDlg::setCurPos(qint64 size, int finished)
 {
 	ui->pbTotal->setValue(finished);
-	ui->lbTotal->setText(tr("Total %1 Current %2").arg(m_TotalCount).arg(finished));
-	ui->pbCurItem->setValue((int)(size* 100LL / m_TotalSize));
+	ui->lbTotal->setText(tr("Total %1 Finished %2").arg(m_TotalCount).arg(finished));
+	//ui->pbCurItem->setValue((int)(size* 100LL / m_TotalSize));
+}
+
+void CopyDlg::setCurFileProg(qint64 filesize, qint64 finished)
+{
+	ui->pbCurItem->setValue((int)(finished * 100LL / filesize));
 }
 void CopyDlg::setCurItem(QString source, QString target)
 {

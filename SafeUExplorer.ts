@@ -106,6 +106,72 @@
     </message>
 </context>
 <context>
+    <name>CInputKeyDlg</name>
+    <message>
+        <location filename="CInputKeyDlg.ui" line="14"/>
+        <source>输入窗口</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="CInputKeyDlg.ui" line="20"/>
+        <source>请输入密钥</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="CInputKeyDlg.ui" line="45"/>
+        <source>登录</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="CInputKeyDlg.cpp" line="28"/>
+        <source>Input</source>
+        <translation>输入</translation>
+    </message>
+    <message>
+        <location filename="CInputKeyDlg.cpp" line="28"/>
+        <source>Please Input Key!</source>
+        <translation>请输入密钥！</translation>
+    </message>
+    <message>
+        <location filename="CInputKeyDlg.cpp" line="46"/>
+        <source>Key Error</source>
+        <translation>密钥错误</translation>
+    </message>
+    <message>
+        <location filename="CInputKeyDlg.cpp" line="46"/>
+        <source>Please Input Correct Key!</source>
+        <translation>请输入正确的密钥！</translation>
+    </message>
+    <message>
+        <location filename="CInputKeyDlg.cpp" line="53"/>
+        <location filename="CInputKeyDlg.cpp" line="56"/>
+        <location filename="CInputKeyDlg.cpp" line="59"/>
+        <location filename="CInputKeyDlg.cpp" line="62"/>
+        <source>Open Failed</source>
+        <translation>打开失败</translation>
+    </message>
+    <message>
+        <location filename="CInputKeyDlg.cpp" line="53"/>
+        <source>Open TF Card Failed!</source>
+        <translation>打开TF卡失败！</translation>
+    </message>
+    <message>
+        <location filename="CInputKeyDlg.cpp" line="56"/>
+        <source>GetCap Failed!</source>
+        <translation>获取设备属性失败！</translation>
+    </message>
+    <message>
+        <location filename="CInputKeyDlg.cpp" line="59"/>
+        <source>Not Authorized!</source>
+        <translation>没有授权！</translation>
+    </message>
+    <message>
+        <location filename="CInputKeyDlg.cpp" line="62"/>
+        <source>Unknown Error</source>
+        <translation>未知错误</translation>
+    </message>
+</context>
+<context>
     <name>CLocalModel</name>
     <message>
         <location filename="CLocalModel.cpp" line="227"/>
@@ -199,76 +265,102 @@
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="53"/>
+        <location filename="CSafeUExplorer.cpp" line="60"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="53"/>
+        <location filename="CSafeUExplorer.cpp" line="60"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="53"/>
+        <location filename="CSafeUExplorer.cpp" line="60"/>
         <source>Type</source>
         <translation>类型</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="53"/>
+        <location filename="CSafeUExplorer.cpp" line="60"/>
         <source>Date Modified</source>
         <translation>修改日期</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="122"/>
+        <location filename="CSafeUExplorer.cpp" line="119"/>
+        <location filename="CSafeUExplorer.cpp" line="146"/>
+        <source>SafeUDisk(%1GB)</source>
+        <translation>安全U盘 (%1GB)</translation>
+    </message>
+    <message>
+        <location filename="CSafeUExplorer.cpp" line="125"/>
+        <source>Mount Failed!</source>
+        <translation>挂在失败！</translation>
+    </message>
+    <message>
+        <location filename="CSafeUExplorer.cpp" line="192"/>
+        <source>Not Formated!</source>
+        <translation>TF卡未格式化或未授权！</translation>
+    </message>
+    <message>
+        <location filename="CSafeUExplorer.cpp" line="125"/>
+        <location filename="CSafeUExplorer.cpp" line="192"/>
+        <source>Hide Partition Not Formated!</source>
+        <translation>隐藏分区未格式化或未授权！</translation>
+    </message>
+    <message>
+        <location filename="CSafeUExplorer.cpp" line="135"/>
         <source>Data Lost Warning</source>
         <translation>数据丢失警告</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="122"/>
+        <location filename="CSafeUExplorer.cpp" line="135"/>
         <source>Format Fs will Lost All Data in both Normal and Hide Partition,Continue?</source>
         <translation>分区和格式化文件系统将导致普通分区和隐藏分区的所有数据丢失，是否继续？</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="132"/>
+        <location filename="CSafeUExplorer.cpp" line="150"/>
+        <source>Format Operation Succeed!</source>
+        <translation>格式化操作成功！</translation>
+    </message>
+    <message>
+        <location filename="CSafeUExplorer.cpp" line="154"/>
+        <source>TF Card Failed or  Not Authoried!!!</source>
+        <translation>TF卡读取失败或未授权！！！</translation>
+    </message>
+    <message>
         <source>Unplug and Plug Again</source>
-        <translation>重新插拔TF卡</translation>
+        <translation type="vanished">重新插拔TF卡</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="132"/>
         <source>Hide Partition Format Fs Need Unplug and Plug TF Card Again,Then Press Yes</source>
-        <translation>隐藏分区文件系统格式化需要再次插拔TF卡，插拔完成后点击“YES”</translation>
+        <translation type="vanished">隐藏分区文件系统格式化需要再次插拔TF卡，插拔完成后点击“YES”</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="138"/>
+        <location filename="CSafeUExplorer.cpp" line="150"/>
         <source>Succeed</source>
         <translation>成功</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="138"/>
         <source>Partition and Format Operation Succeed!</source>
-        <translation>分区和格式化操作完成</translation>
+        <translation type="vanished">分区和格式化操作完成</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="142"/>
-        <location filename="CSafeUExplorer.cpp" line="146"/>
+        <location filename="CSafeUExplorer.cpp" line="154"/>
         <source>Format Failed</source>
         <translation>格式化失败</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="142"/>
-        <location filename="CSafeUExplorer.cpp" line="146"/>
         <source>Format Cancelled,Only Normal Partition Could be Used!</source>
-        <translation>隐藏分区格式化取消，只有普通分区能正常使用！</translation>
+        <translation type="vanished">隐藏分区格式化取消，只有普通分区能正常使用！</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="341"/>
-        <location filename="CSafeUExplorer.cpp" line="397"/>
+        <location filename="CSafeUExplorer.cpp" line="356"/>
+        <location filename="CSafeUExplorer.cpp" line="412"/>
         <source>File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="317"/>
-        <location filename="CSafeUExplorer.cpp" line="380"/>
+        <location filename="CSafeUExplorer.cpp" line="332"/>
+        <location filename="CSafeUExplorer.cpp" line="395"/>
         <source>Dir</source>
         <translation>文件夹</translation>
     </message>
@@ -328,8 +420,9 @@
     <message>
         <location filename="CopyDlg.cpp" line="52"/>
         <location filename="CopyDlg.cpp" line="63"/>
-        <source>Total %1 Current %2</source>
-        <translation>总共 %1 个项目，当前第 %2 个项目</translation>
+        <source>Total %1 Finished %2</source>
+        <oldsource>Total %1 Current %2</oldsource>
+        <translation>总共 %1 个项目，已完成 %2 个项目</translation>
     </message>
 </context>
 </TS>

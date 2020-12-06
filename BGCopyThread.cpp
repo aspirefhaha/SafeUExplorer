@@ -207,12 +207,17 @@ void BGCopyThread::run()
 				if (exfat_lookup(ef, &pnode, realitem.source.toUtf8().data()) == 0) {
 					
 					do {
+						static int emitcount = 0;
 						readsize = exfat_generic_pread(ef, pnode, buf, RWONCESIZE, off);
 						if (readsize > 0) {
 							targetfile.write(buf, readsize);
 						}
 						off += readsize;
-					} while (readsize > 0);
+						if (emitcount++ % 10 == 0) {
+							curFileProg(realitem.size, off);
+							usleep(10);
+						}
+					} while (readsize > 0&& !m_bQuit);
 				}
 				targetfile.close();
 				exfat_put_node(ef,pnode);
@@ -233,6 +238,7 @@ void BGCopyThread::run()
 							char * buf = (char *)malloc(RWONCESIZE);
 							qint64 onceread = 0;
 							do {
+								static int emitcount = 0;
 								onceread = sourcef.read(buf, RWONCESIZE);
 								if (onceread <= 0) {
 									break;
@@ -240,11 +246,15 @@ void BGCopyThread::run()
 								ssize_t writensize = exfat_generic_pwrite(ef, node, buf, onceread, off);
 								if (writensize == onceread) {
 									off += writensize;
+									if (emitcount++ % 10 == 0) {
+										curFileProg(realitem.size, off);
+										usleep(10);
+									}
 								}
 								else {
 									break;
 								}
-							} while (onceread>0);
+							} while (onceread>0 && !m_bQuit);
 
 							free(buf);
 							sourcef.close();

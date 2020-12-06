@@ -1,5 +1,6 @@
 
 #include "exfat.h"
+#include "exfatfs.h"
 #include "CSafeUExplorer.h"
 #include "CommonTools.h"
 #include "ui_CSafeUExplorer.h"
@@ -12,6 +13,7 @@
 #include "CopyItem.h"
 #include "CopyDlg.h"
 #include <QMessageBox>
+#include <QInputDialog>
 #include "CFormatDlg.h"
 #include "mkexfat.h"
 
@@ -29,18 +31,23 @@ CSafeUExplorer::CSafeUExplorer(QWidget *parent) :
     ui->mainToolBar->addAction(ui->actionDesktop);
     ui->mainToolBar->addAction(ui->actionUpFolder);
     ui->mainToolBar->addAction(ui->actionRefresh);
-    ui->mainToolBar->addSeparator();
-    ui->mainToolBar->addAction(ui->actionChgPassword);
-    ui->mainToolBar->addAction(ui->actionFormatUDisk);
-    ui->mainToolBar->addSeparator();
-    ui->mainToolBar->addAction(ui->actionQuit);
-    ui->mainToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+	//if (m_pGlobalModel->ef && m_pGlobalModel->ef->dev) {
+	ui->mainToolBar->addSeparator();
+	//ui->mainToolBar->addAction(ui->actionChgPassword);
+	ui->mainToolBar->addAction(ui->actionFormatUDisk);
+	//}
+
+	ui->mainToolBar->addSeparator();
+	ui->mainToolBar->addAction(ui->actionQuit);
+	ui->mainToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 
     ui->splitter->setStretchFactor(0,20);
     ui->splitter->setStretchFactor(1,40);
     ui->splitter->setStretchFactor(2,40);
 
     m_pGlobalModel = new CGlobalModel(this);
+
+	
     ui->tvGlobal->setHeaderHidden(true);
     //ui->tvGlobal->verticalHeader()->setVisible(false);
     ui->tvGlobal->header()->setStretchLastSection(true);
@@ -101,16 +108,22 @@ CSafeUExplorer::CSafeUExplorer(QWidget *parent) :
 
 	connect(&copyThread, SIGNAL(total(int, qint64)), &copyDlg, SLOT(setTotal(int, qint64)));
 	connect(&copyThread, SIGNAL(curFinished(qint64, int)), &copyDlg, SLOT(setCurPos(qint64, int)));
+	connect(&copyThread, SIGNAL(curFileProg(qint64, qint64)), &copyDlg, SLOT(setCurFileProg(qint64, qint64)));
 	connect(&copyThread, SIGNAL(curItem(QString, QString)), &copyDlg, SLOT(setCurItem(QString, QString)));
 	connect(&copyThread, SIGNAL(copyFinished()), &copyDlg, SLOT(sltQuit()));
 	
 	connect(&copyDlg, SIGNAL(wantQuit()), this, SLOT(sltWantCancelCopy()));
 
     if(m_pGlobalModel->ef && m_pGlobalModel->ef->dev){
+
+		ui->lbSafeUDisk->setText(tr("SafeUDisk(%1GB)").arg(exfat_get_size(m_pGlobalModel->ef->dev) / 1024LL / 1024LL / 1024LL + 1));
         QString udiskrootdir = "/";
         refreshUDiskFs(udiskrootdir);
 		copyThread.ef = m_pGlobalModel->ef;
     }
+	else {
+		QMessageBox::warning(this, tr("Mount Failed!"), tr("Hide Partition Not Formated!"));
+	}
 
     QString localDesktop = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     refreshLocalFs(localDesktop);
@@ -125,39 +138,22 @@ void CSafeUExplorer::sltFormat(bool)
 		if (m_pGlobalModel->ef && m_pGlobalModel->ef->dev) {
 			exfat_unmount(m_pGlobalModel->ef);
 			m_pGlobalModel->ef->dev = NULL;
+			copyThread.ef = NULL;
 		}
-		CFormatDlg formatDlg;
-		formatDlg.setModal(true);
-		if (formatDlg.exec() == QDialog::Accepted) {
+        format_fs();
+        if (0 == exfat_mount(m_pGlobalModel->ef, "nothing", "rw")) {
+            if (m_pGlobalModel->ef && m_pGlobalModel->ef->dev) {
+				ui->lbSafeUDisk->setText(tr("SafeUDisk(%1GB)").arg(exfat_get_size(m_pGlobalModel->ef->dev) / 1024LL / 1024LL / 1024LL+1));
+				copyThread.ef = m_pGlobalModel->ef;
+                QString rootDir = "/";
+                refreshUDiskFs(rootDir);
+                QMessageBox::information(this, tr("Succeed"), tr("Format Operation Succeed!"), QMessageBox::Yes, QMessageBox::Yes);
+            }
+        }
+        else {
+            QMessageBox::warning(this, tr("Format Failed"), tr("TF Card Failed or  Not Authoried!!!"), QMessageBox::Yes, QMessageBox::Yes);
+        }
 
-			if (QMessageBox::Yes == QMessageBox::warning(this, tr("Unplug and Plug Again"), tr("Hide Partition Format Fs Need Unplug and Plug TF Card Again,Then Press Yes"), QMessageBox::Yes, QMessageBox::Yes)) {
-				format_fs();
-				if (0 == exfat_mount(m_pGlobalModel->ef, "nothing", "rw")) {
-					if (m_pGlobalModel->ef && m_pGlobalModel->ef->dev) {
-						QString rootDir = "/";
-						refreshUDiskFs(rootDir);
-						QMessageBox::information(this, tr("Succeed"), tr("Partition and Format Operation Succeed!"), QMessageBox::Yes, QMessageBox::Yes);
-					}
-				}
-				else {
-					QMessageBox::warning(this, tr("Format Failed"), tr("Format Cancelled,Only Normal Partition Could be Used!"), QMessageBox::Yes, QMessageBox::Yes);
-				}
-			}
-			else {
-				QMessageBox::warning(this, tr("Format Failed"), tr("Format Cancelled,Only Normal Partition Could be Used!"), QMessageBox::Yes, QMessageBox::Yes);
-
-			}
-		}
-		else {
-			if (0 == exfat_mount(m_pGlobalModel->ef, "nothing", "rw")) {
-				if (m_pGlobalModel->ef && m_pGlobalModel->ef->dev) {
-					QString rootDir = "/";
-					refreshUDiskFs(rootDir);
-				}
-			}
-		}
-
-		
 	}
 	
 }
@@ -187,7 +183,16 @@ void CSafeUExplorer::sltQuit(bool checked)
 void CSafeUExplorer::sltRefresh(bool checked)
 {
 	Q_UNUSED(checked)
-	qDebug() << "refresh";
+	if (m_pGlobalModel->ef && m_pGlobalModel->ef->dev) {
+		QString udiskrootdir = "/";
+		refreshUDiskFs(udiskrootdir);
+		copyThread.ef = m_pGlobalModel->ef;
+	}
+	else {
+		QMessageBox::warning(this, tr("Not Formated!"), tr("Hide Partition Not Formated!"));
+	}
+	QString localDesktop = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+	refreshLocalFs(localDesktop);
 }
 
 void CSafeUExplorer::sltAcceptLocalItemList(QList<int> list)
@@ -281,7 +286,7 @@ void CSafeUExplorer::refreshUDiskFs(QString &dirpath)
 	QFileIconProvider icon_provider;
 	QTableWidgetItem * col1Item = nullptr;
 	//ui->twSafeUDisk->clear();
-	if (ef->dev == NULL)
+	if (ef==NULL || ef->dev == NULL)
 		return;
 	ui->leUDisk->setText(dirpath);
 	rc = exfat_lookup(ef, &pdir, dirpath.toUtf8().data());

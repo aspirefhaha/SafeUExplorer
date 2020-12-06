@@ -29,6 +29,7 @@ Q_SIGNALS:
 	void total(int total, qint64 totalsize);
 	void curFinished(qint64 size, int finisheditem);
 	void curItem(QString source, QString target);
+	void curFileProg(qint64 filesize, qint64  finishedsize);
 	void copyFinished();
 
 protected:

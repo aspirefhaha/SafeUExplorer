@@ -27,6 +27,7 @@ protected slots:
 	void sltCancel(); 
 	void setTotal(int total, qint64 totalsize);
 	void setCurPos(qint64 size, int finished);
+	void setCurFileProg(qint64 filesize, qint64 finished);
 	void setCurItem(QString source, QString target);
 	virtual void reject();
 

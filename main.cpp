@@ -1,6 +1,7 @@
 
 #include "exfat.h"
 #include "CSafeUExplorer.h"
+#include "CInputKeyDlg.h"
 #include <QApplication>
 #include <QTranslator>
 
@@ -11,9 +12,25 @@ int main(int argc, char *argv[])
     if(pTranslator->load("./SafeUExplorer.qm")){
         a.installTranslator(pTranslator);
     }
-    CSafeUExplorer w;
-    w.show();
-
-    return a.exec();
+	CInputKeyDlg inputDlg;
+	int ret = 0;
+	int getenctype = getEncType();
+	if (getenctype == 0) {
+		CSafeUExplorer w;
+		w.show();
+		ret = a.exec();
+	}
+	else {
+		inputDlg.setModal(true);
+		if (inputDlg.exec() == QDialog::Accepted) {
+			CSafeUExplorer w;
+			w.show();
+			ret = a.exec();
+		}
+		
+	}
+	
+    
+    return ret;
 }
 

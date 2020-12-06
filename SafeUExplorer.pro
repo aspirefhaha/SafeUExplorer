@@ -30,9 +30,11 @@ INCLUDEPATH += ../exfat_tf/mkfs
 LIBS += -lSdCryptoStor
 
 SOURCES +=  \
+        ../exfat_tf/libexfat/sm4.c \
         BGCopyThread.cpp \
         CFormatDlg.cpp \
         CGlobalModel.cpp \
+        CInputKeyDlg.cpp \
         CLocalModel.cpp \
         CommonTools.cpp \
         CopyDlg.cpp \
@@ -64,6 +66,7 @@ HEADERS += \
         CFSPrivate.h \
         CFormatDlg.h \
         CGlobalModel.h \
+        CInputKeyDlg.h \
         CLocalModel.h \
         CSafeUExplorer.h \
         CommonTools.h \
@@ -75,6 +78,7 @@ HEADERS += \
 
 FORMS += \
         CFormatDlg.ui \
+        CInputKeyDlg.ui \
         CSafeUExplorer.ui \
         CopyDlg.ui
 

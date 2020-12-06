@@ -27,7 +27,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QLabel" name="label">
+         <widget class="QLabel" name="lbSafeUDisk">
           <property name="text">
            <string>SafeUDisk</string>
           </property>
@@ -88,7 +88,7 @@
      <x>0</x>
      <y>0</y>
      <width>1237</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>
