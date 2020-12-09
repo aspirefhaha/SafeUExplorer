@@ -182,7 +182,7 @@ void BGCopyThread::run()
 	for (int i = 0; i < realItems.count() && !m_bQuit;i++) {
 		CopyItem realitem = realItems.at(i);
 		//qDebug() << realitem.target;
-		
+		emit curItem(realitem.source, realitem.target);
 		switch (realitem.sourceType) {
 		case FTLDIR:
 			exfat_mkdir(ef, realitem.target.toUtf8().data());
@@ -269,7 +269,7 @@ void BGCopyThread::run()
 		cursize += realitem.size;
 		curfile++;
 		emit curFinished(cursize, curfile);
-		emit curItem(realitem.source, realitem.target);
+		
 		//sleep(3);
 	}
 

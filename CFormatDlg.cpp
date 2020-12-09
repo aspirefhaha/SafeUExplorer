@@ -90,7 +90,6 @@ void CFormatDlg::sltConfirm()
 	SCAN_DATA sd;
 	DL_CB cb = { this, SetProgress, ShowInfo };
 	
-
 	
 	ret = m_methNor->open(szDevList, DLF_TYPE_SCSI, &ctx);
 	if (ret)
