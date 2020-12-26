@@ -39,33 +39,33 @@
         <translation>没有发现TF卡</translation>
     </message>
     <message>
-        <location filename="CFormatDlg.cpp" line="98"/>
+        <location filename="CFormatDlg.cpp" line="97"/>
         <source>Open TF Card Failed:0x%1</source>
         <translation>打开TF卡失败: 0x%1</translation>
     </message>
     <message>
-        <location filename="CFormatDlg.cpp" line="114"/>
+        <location filename="CFormatDlg.cpp" line="113"/>
         <source>Unplug and Plug TF Card</source>
         <translation>重新插拔TF卡</translation>
     </message>
     <message>
-        <location filename="CFormatDlg.cpp" line="115"/>
+        <location filename="CFormatDlg.cpp" line="114"/>
         <source>Next</source>
         <translation>下一步</translation>
     </message>
     <message>
-        <location filename="CFormatDlg.cpp" line="122"/>
-        <location filename="CFormatDlg.cpp" line="133"/>
+        <location filename="CFormatDlg.cpp" line="121"/>
+        <location filename="CFormatDlg.cpp" line="132"/>
         <source>HighFormat Device Failed:0x%1</source>
         <translation>格式化设备失败:0x%1</translation>
     </message>
     <message>
-        <location filename="CFormatDlg.cpp" line="139"/>
+        <location filename="CFormatDlg.cpp" line="138"/>
         <source>Succeed</source>
         <translation>成功</translation>
     </message>
     <message>
-        <location filename="CFormatDlg.cpp" line="139"/>
+        <location filename="CFormatDlg.cpp" line="138"/>
         <source>Normal Partition Format Succeed,Please Follow Next Step to Format Hide Partition</source>
         <translation>普通分区格式化成功，请按照接下来的提示完成隐藏分区的格式化</translation>
     </message>
@@ -285,44 +285,44 @@
         <translation>修改日期</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="119"/>
-        <location filename="CSafeUExplorer.cpp" line="146"/>
+        <location filename="CSafeUExplorer.cpp" line="122"/>
+        <location filename="CSafeUExplorer.cpp" line="157"/>
         <source>SafeUDisk(%1GB)</source>
         <translation>安全U盘 (%1GB)</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="125"/>
+        <location filename="CSafeUExplorer.cpp" line="128"/>
         <source>Mount Failed!</source>
         <translation>挂载失败！</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="192"/>
+        <location filename="CSafeUExplorer.cpp" line="203"/>
         <source>Not Formated!</source>
         <translation>TF卡未格式化或未授权！</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="125"/>
-        <location filename="CSafeUExplorer.cpp" line="192"/>
+        <location filename="CSafeUExplorer.cpp" line="128"/>
+        <location filename="CSafeUExplorer.cpp" line="203"/>
         <source>Hide Partition Not Formated!</source>
         <translation>隐藏分区未格式化或未授权！</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="135"/>
+        <location filename="CSafeUExplorer.cpp" line="146"/>
         <source>Data Lost Warning</source>
         <translation>数据丢失警告</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="135"/>
+        <location filename="CSafeUExplorer.cpp" line="146"/>
         <source>Format Fs will Lost All Data in both Normal and Hide Partition,Continue?</source>
         <translation>分区和格式化文件系统将导致普通分区和隐藏分区的所有数据丢失，是否继续？</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="150"/>
+        <location filename="CSafeUExplorer.cpp" line="161"/>
         <source>Format Operation Succeed!</source>
         <translation>格式化操作成功！</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="154"/>
+        <location filename="CSafeUExplorer.cpp" line="165"/>
         <source>TF Card Failed or  Not Authoried!!!</source>
         <translation>TF卡读取失败或未授权！！！</translation>
     </message>
@@ -335,7 +335,7 @@
         <translation type="vanished">隐藏分区文件系统格式化需要再次插拔TF卡，插拔完成后点击“YES”</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="150"/>
+        <location filename="CSafeUExplorer.cpp" line="161"/>
         <source>Succeed</source>
         <translation>成功</translation>
     </message>
@@ -344,7 +344,7 @@
         <translation type="vanished">分区和格式化操作完成</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="154"/>
+        <location filename="CSafeUExplorer.cpp" line="165"/>
         <source>Format Failed</source>
         <translation>格式化失败</translation>
     </message>
@@ -353,14 +353,14 @@
         <translation type="vanished">隐藏分区格式化取消，只有普通分区能正常使用！</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="356"/>
-        <location filename="CSafeUExplorer.cpp" line="412"/>
+        <location filename="CSafeUExplorer.cpp" line="367"/>
+        <location filename="CSafeUExplorer.cpp" line="423"/>
         <source>File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="332"/>
-        <location filename="CSafeUExplorer.cpp" line="395"/>
+        <location filename="CSafeUExplorer.cpp" line="343"/>
+        <location filename="CSafeUExplorer.cpp" line="406"/>
         <source>Dir</source>
         <translation>文件夹</translation>
     </message>
@@ -398,7 +398,7 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="CopyDlg.ui" line="118"/>
+        <location filename="CopyDlg.ui" line="125"/>
         <source>取消</source>
         <translation></translation>
     </message>
@@ -423,6 +423,14 @@
         <source>Total %1 Finished %2</source>
         <oldsource>Total %1 Current %2</oldsource>
         <translation>总共 %1 个项目，已完成 %2 个项目</translation>
+    </message>
+</context>
+<context>
+    <name>UDiskFileTableWidget</name>
+    <message>
+        <location filename="UDiskFileTableWidget.cpp" line="19"/>
+        <source>Del</source>
+        <translation>删除</translation>
     </message>
 </context>
 </TS>

@@ -34,6 +34,7 @@ protected Q_SLOTS:
 	void sltAcceptUDiskItemList(QList<int> list);
 	void sltWantCancelCopy();
 	void sltFormat(bool);
+	void sltDelUDiskFile(QModelIndex);
 
 private:
     Ui::CSafeUExplorer *ui;

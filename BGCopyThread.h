@@ -24,6 +24,7 @@ public:
 	int m_TotalCount;
 	void addLocalSourceToRealItems(CopyItem diritem);
 	void addUDiskSourceToRealItems(CopyItem diritem);
+	void RemovePath(QString path);
 	struct exfat * ef;
 
 Q_SIGNALS:
@@ -36,6 +37,8 @@ Q_SIGNALS:
 
 protected:
     void run() override;
+	void removeUDiskFile(struct exfat_node * pnode);
+	void removeUDiskDir(struct exfat_node * pnode);
 };
 
 #endif // BGCOPYTHREAD_H

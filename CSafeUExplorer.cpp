@@ -101,6 +101,8 @@ CSafeUExplorer::CSafeUExplorer(QWidget *parent) :
 	connect(ui->twLocal, SIGNAL(acceptItemList(QList<int>)), this, SLOT(sltAcceptUDiskItemList(QList<int>)));
 	connect(ui->twSafeUDisk, SIGNAL(acceptItemList(QList<int>)), this, SLOT(sltAcceptLocalItemList(QList<int>)));
 
+	connect(ui->twSafeUDisk, SIGNAL(DelUdiskItem(QModelIndex)), this, SLOT(sltDelUDiskFile(QModelIndex)));
+
     connect(ui->actionRefresh,SIGNAL(triggered(bool)),this,SLOT(sltRefresh(bool)));
 	connect(ui->actionDesktop, SIGNAL(triggered(bool)), this, SLOT(sltDesktop(bool)));
 	connect(ui->actionQuit, SIGNAL(triggered(bool)), this, SLOT(sltQuit(bool)));
@@ -129,6 +131,14 @@ CSafeUExplorer::CSafeUExplorer(QWidget *parent) :
     QString localDesktop = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     refreshLocalFs(localDesktop);
 
+}
+
+void CSafeUExplorer::sltDelUDiskFile(QModelIndex index)
+{
+	QTableWidgetItem * item = ui->twSafeUDisk->item(index.row(), 0);
+	qDebug() << "Del" <<  item->data(Qt::UserRole).toString();
+	copyThread.RemovePath(item->data(Qt::UserRole).toString());
+	refreshUDiskFs(ui->leUDisk->text());
 }
 
 void CSafeUExplorer::sltFormat(bool)

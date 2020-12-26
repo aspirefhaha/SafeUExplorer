@@ -15,10 +15,18 @@ public:
 signals:
     void startDrag();
 	void acceptItemList(QList<int>);
+	void DelUdiskItem(QModelIndex);
+
+protected slots:
+	void show_menu(QPoint);
+	void clickgoose();
 
 protected:
     void dropEvent(QDropEvent *event) Q_DECL_OVERRIDE;
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
+	QModelIndex m_selIndex;
+	QMenu *menu;
+	QAction *pnew ;
 };
 
 #endif // UDISKFILETABLEWIDGET_H

@@ -6,16 +6,46 @@
 #include <QEvent>
 #include <QMimeData>
 #include <QStandardItemModel>
+#include <QAction>
+#include <QMenu>
 
 UDiskFileTableWidget::UDiskFileTableWidget(QWidget * parent)
     :QTableWidget(parent)
 {
 
+	setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(show_menu(QPoint)));
+	menu = new QMenu(this);
+	pnew = new QAction(tr("Del"), this);
+	connect(pnew, SIGNAL(triggered()), this, SLOT(clickgoose()));
+	menu->addAction(pnew);
 }
 
 UDiskFileTableWidget::~UDiskFileTableWidget()
 {
 
+}
+
+void UDiskFileTableWidget::show_menu(QPoint pt)
+{
+	
+	
+	//获得鼠标点击的x，y坐标点 
+	/*int x = pt.x();
+	int y = pt.y();*/
+	m_selIndex = this->indexAt(pt);
+	QTableWidgetItem * pitem = item(m_selIndex.row(), 0);
+	qDebug() << "Del" << pitem->data(Qt::UserRole).toString();
+	if (pitem->text() == "..")
+		return;
+	menu->move(cursor().pos());
+	menu->show();
+}
+
+void UDiskFileTableWidget::clickgoose()
+{
+	//int row = index.row();//获得QTableWidget列表点击的行数 
+	emit DelUdiskItem(m_selIndex);
 }
 
 void UDiskFileTableWidget::mousePressEvent(QMouseEvent *event)
