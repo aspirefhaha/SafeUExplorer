@@ -1,7 +1,8 @@
 #include "exfat.h"
 #include "BGCopyThread.h"
+#include <QTime>
 
-#define RWONCESIZE 40960
+#define RWONCESIZE 409600
 
 BGCopyThread::BGCopyThread(QObject * parent)
     :QThread(parent),
@@ -118,6 +119,8 @@ void BGCopyThread::run()
 {
 	m_TotalSize = 1;
 	m_TotalCount = 0;
+	QTime starttime;
+	m_FinishedSize = 0;
 	realItems.clear();
 	qDebug() << "calculating...";
 	if (ef == NULL || ef->dev == NULL)
@@ -177,6 +180,7 @@ void BGCopyThread::run()
 		}
 		emit total(m_TotalCount, m_TotalSize);
 	}
+	starttime.start();
 	int curfile = 0;
 	qint64 cursize = 0;
 	for (int i = 0; i < realItems.count() && !m_bQuit;i++) {
@@ -213,8 +217,10 @@ void BGCopyThread::run()
 							targetfile.write(buf, readsize);
 						}
 						off += readsize;
+						m_FinishedSize += readsize;
 						if (emitcount++ % 10 == 0) {
 							curFileProg(realitem.size, off);
+							speed(m_FinishedSize * 1000.0 / starttime.elapsed() / 1024.0 / 1024.0);
 							usleep(10);
 						}
 					} while (readsize > 0&& !m_bQuit);
@@ -246,8 +252,10 @@ void BGCopyThread::run()
 								ssize_t writensize = exfat_generic_pwrite(ef, node, buf, onceread, off);
 								if (writensize == onceread) {
 									off += writensize;
+									m_FinishedSize += writensize;
 									if (emitcount++ % 10 == 0) {
 										curFileProg(realitem.size, off);
+										speed(m_FinishedSize * 1000.0 / starttime.elapsed() / 1024.0 / 1024.0);
 										usleep(10);
 									}
 								}

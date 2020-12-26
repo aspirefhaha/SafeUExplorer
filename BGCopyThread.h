@@ -20,6 +20,7 @@ public:
 		m_bQuit = true;
 	}
 	qint64 m_TotalSize;
+	qint64 m_FinishedSize;
 	int m_TotalCount;
 	void addLocalSourceToRealItems(CopyItem diritem);
 	void addUDiskSourceToRealItems(CopyItem diritem);
@@ -30,6 +31,7 @@ Q_SIGNALS:
 	void curFinished(qint64 size, int finisheditem);
 	void curItem(QString source, QString target);
 	void curFileProg(qint64 filesize, qint64  finishedsize);
+	void speed(qreal speed);
 	void copyFinished();
 
 protected:

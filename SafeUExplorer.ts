@@ -293,7 +293,7 @@
     <message>
         <location filename="CSafeUExplorer.cpp" line="125"/>
         <source>Mount Failed!</source>
-        <translation>挂在失败！</translation>
+        <translation>挂载失败！</translation>
     </message>
     <message>
         <location filename="CSafeUExplorer.cpp" line="192"/>

@@ -29,6 +29,7 @@ protected slots:
 	void setCurPos(qint64 size, int finished);
 	void setCurFileProg(qint64 filesize, qint64 finished);
 	void setCurItem(QString source, QString target);
+	void sltSpeed(qreal  speed);
 	virtual void reject();
 
 private:

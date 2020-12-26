@@ -111,6 +111,7 @@ CSafeUExplorer::CSafeUExplorer(QWidget *parent) :
 	connect(&copyThread, SIGNAL(curFileProg(qint64, qint64)), &copyDlg, SLOT(setCurFileProg(qint64, qint64)));
 	connect(&copyThread, SIGNAL(curItem(QString, QString)), &copyDlg, SLOT(setCurItem(QString, QString)));
 	connect(&copyThread, SIGNAL(copyFinished()), &copyDlg, SLOT(sltQuit()));
+	connect(&copyThread, SIGNAL(speed(qreal)), &copyDlg, SLOT(sltSpeed(qreal)));
 	
 	connect(&copyDlg, SIGNAL(wantQuit()), this, SLOT(sltWantCancelCopy()));
 

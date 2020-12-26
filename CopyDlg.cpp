@@ -64,6 +64,11 @@ void CopyDlg::setCurPos(qint64 size, int finished)
 	//ui->pbCurItem->setValue((int)(size* 100LL / m_TotalSize));
 }
 
+void CopyDlg::sltSpeed(qreal  speed)
+{
+	ui->lbSpeed->setText(QString::number(speed) + " MB/s");
+}
+
 void CopyDlg::setCurFileProg(qint64 filesize, qint64 finished)
 {
 	ui->pbCurItem->setValue((int)(finished * 100LL / filesize));
