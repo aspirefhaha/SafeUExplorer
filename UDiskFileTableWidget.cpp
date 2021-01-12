@@ -19,6 +19,10 @@ UDiskFileTableWidget::UDiskFileTableWidget(QWidget * parent)
 	pnew = new QAction(tr("Del"), this);
 	connect(pnew, SIGNAL(triggered()), this, SLOT(clickgoose()));
 	menu->addAction(pnew);
+	menuProperty = new QMenu(this);
+	propertyAction = new QAction(tr("Property"), this);
+	connect(propertyAction, SIGNAL(triggered()), this, SLOT(clickproperty()));
+	menuProperty->addAction(propertyAction);
 }
 
 UDiskFileTableWidget::~UDiskFileTableWidget()
@@ -28,18 +32,28 @@ UDiskFileTableWidget::~UDiskFileTableWidget()
 
 void UDiskFileTableWidget::show_menu(QPoint pt)
 {
-	
-	
 	//获得鼠标点击的x，y坐标点 
 	/*int x = pt.x();
 	int y = pt.y();*/
+	QList<QTableWidgetItem*>items = selectedItems();
+
+	int count = items.count() / this->columnCount();
+	if (count > 1)
+	{
+		menuProperty->move(cursor().pos());
+		menuProperty->show();
+		return;
+	}
 	m_selIndex = this->indexAt(pt);
 	QTableWidgetItem * pitem = item(m_selIndex.row(), 0);
-	qDebug() << "Del" << pitem->data(Qt::UserRole).toString();
-	if (pitem->text() == "..")
-		return;
-	menu->move(cursor().pos());
-	menu->show();
+	if (pitem) {
+		qDebug() << "Del" << pitem->data(Qt::UserRole).toString();
+		if (pitem->text() == "..")
+			return;
+		menu->move(cursor().pos());
+		menu->show();
+	}
+	
 }
 
 void UDiskFileTableWidget::clickgoose()

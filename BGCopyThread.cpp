@@ -80,7 +80,9 @@ void BGCopyThread::addLocalSourceToRealItems(CopyItem diritem)
 	QString tardir = diritem.targetDir;
 	if (tardir == "/")
 		tardir = "";
-	realitem.target = tardir + "/"  + diritem.source.mid(diritem.sourceDir.length(), diritem.source.length() - diritem.sourceDir.length());
+	else
+		tardir += "/";
+	realitem.target = tardir + diritem.source.mid(diritem.sourceDir.length(), diritem.source.length() - diritem.sourceDir.length());
 	realItems.append(realitem);
 	m_TotalCount++;
 	QDir dir(diritem.source);
@@ -95,6 +97,8 @@ void BGCopyThread::addLocalSourceToRealItems(CopyItem diritem)
 		QString filetardir = diritem.targetDir;
 		if (filetardir == "/")
 			filetardir = "";
+		else
+			filetardir += "/";
 		fileitem.target = filetardir + fileInfo.absoluteFilePath().mid(diritem.sourceDir.length(), fileInfo.absoluteFilePath().length() - diritem.sourceDir.length());
 		fileitem.targetType = FTFILE;
 		fileitem.sourceType = FTLFILE;
@@ -115,6 +119,41 @@ void BGCopyThread::addLocalSourceToRealItems(CopyItem diritem)
 	}
 }
 
+void BGCopyThread::addUDiskDelSubFiles(QString curpath,struct exfat_node * pnode, QList<QString> & list)
+{
+	char buffer[EXFAT_UTF8_NAME_BUFFER_MAX];
+
+	struct exfat_iterator it;
+	struct exfat_node * subnode;
+	int rc = exfat_opendir(ef, pnode, &it);
+	if (rc != 0)
+		return;
+	while ((subnode = exfat_readdir(&it)))
+	{
+		if (subnode->attrib & EXFAT_ATTRIB_DIR) {
+			exfat_get_name(subnode, buffer);
+			addUDiskDelSubFiles(curpath+"/" + buffer, subnode, list);
+			//qDebug() << "Now Remove Dir" << curpath + "/" + buffer;
+			list.append(curpath + "/" + buffer);
+			//removeUDiskDir(subnode);
+		}
+		else {
+			exfat_get_name(subnode, buffer);
+			
+			list.append(curpath + "/" + buffer);
+			//removeUDiskFile(subnode);
+		}
+		//exfat_put_node(ef, subnode);
+	}
+	exfat_closedir(ef, &it);
+	emit total(list.count(), 0);
+
+}
+void BGCopyThread::addUDiskDelFile(QString filename, QList<QString> & list)
+{
+	list.append(filename);
+}
+
 void BGCopyThread::run()
 {
 	m_TotalSize = 1;
@@ -122,10 +161,38 @@ void BGCopyThread::run()
 	QTime starttime;
 	m_FinishedSize = 0;
 	realItems.clear();
-	qDebug() << "calculating...";
 	if (ef == NULL || ef->dev == NULL)
 		m_bQuit = true;
-	if (!m_bQuit) {
+
+	qDebug() << "calculating...";
+	if (m_DelItemList.size() > 0 && !m_bQuit) {
+		QList<QString> realdelitems;
+		foreach(auto delitem, m_DelItemList) {
+			struct exfat_node * pnode;
+			if (exfat_lookup(ef, &pnode, delitem.toUtf8().data()) == 0) {
+				exfat_get_node(pnode);
+				if (pnode->attrib & EXFAT_ATTRIB_DIR) {
+					addUDiskDelSubFiles(delitem ,pnode, realdelitems);
+					realdelitems.append(delitem);
+				}
+				else {
+					addUDiskDelFile(delitem,realdelitems);
+				}
+				exfat_put_node(ef,pnode);
+			}
+		}
+		emit total(realdelitems.count(), 0);
+		int delcount = 0;
+		foreach(auto delitem, realdelitems) {
+			delcount++;
+			//qDebug() << "remove Item:" << delitem;
+			RemovePath(delitem);
+			emit curItem(delitem,delitem);
+			emit curFinished(0, delcount);
+		}
+		m_DelItemList.clear();
+	}
+	else if (!m_bQuit) {
 		foreach(auto copyitem, copyItems) {
 			if (copyitem.sourceType == FTLDRIVE) {
 				QFileInfo sourceinfo(copyitem.source);
@@ -278,17 +345,16 @@ void BGCopyThread::run()
 		curfile++;
 		emit curFinished(cursize, curfile);
 		
-		//sleep(3);
 	}
 
 	qDebug() << "now thread quit";
 	//sleep(1);
-	emit copyFinished();
+	emit workFinished();
 }
 
 void BGCopyThread::RemovePath(QString path)
 {
-	qDebug() << "Remove " << path;
+	//qDebug() << "Remove " << path;
 	char selfilename[EXFAT_UTF8_NAME_BUFFER_MAX] = { 0 };
 	exfat_utf16_to_utf8(selfilename, (const le16_t *)path.data(), EXFAT_UTF8_NAME_BUFFER_MAX, path.length());
 	struct exfat_node * pnode;
@@ -305,8 +371,8 @@ void BGCopyThread::RemovePath(QString path)
 void BGCopyThread::removeUDiskFile(struct exfat_node * pnode)
 {
 	if (exfat_unlink(ef, pnode) == 0) {
-		exfat_put_node(ef, pnode);
-		exfat_cleanup_node(ef, pnode);
+		//exfat_put_node(ef, pnode);
+		//exfat_cleanup_node(ef, pnode);
 	}
 }
 void BGCopyThread::removeUDiskDir(struct exfat_node * pnode)
@@ -324,12 +390,12 @@ void BGCopyThread::removeUDiskDir(struct exfat_node * pnode)
 		{
 			if (subnode->attrib & EXFAT_ATTRIB_DIR) {
 				exfat_get_name(subnode, buffer);
-				qDebug() << "Now Remove Dir" << buffer;
+				//qDebug() << "Now Remove Dir" << buffer;
 				removeUDiskDir(subnode);
 			}
 			else {
 				exfat_get_name(subnode, buffer);
-				qDebug() << "Now Remove File" << buffer;
+				//qDebug() << "Now Remove File" << buffer;
 				removeUDiskFile(subnode);
 			}
 			//exfat_put_node(ef, subnode);

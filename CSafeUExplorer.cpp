@@ -112,8 +112,14 @@ CSafeUExplorer::CSafeUExplorer(QWidget *parent) :
 	connect(&copyThread, SIGNAL(curFinished(qint64, int)), &copyDlg, SLOT(setCurPos(qint64, int)));
 	connect(&copyThread, SIGNAL(curFileProg(qint64, qint64)), &copyDlg, SLOT(setCurFileProg(qint64, qint64)));
 	connect(&copyThread, SIGNAL(curItem(QString, QString)), &copyDlg, SLOT(setCurItem(QString, QString)));
-	connect(&copyThread, SIGNAL(copyFinished()), &copyDlg, SLOT(sltQuit()));
+	connect(&copyThread, SIGNAL(workFinished()), &copyDlg, SLOT(sltQuit()));
 	connect(&copyThread, SIGNAL(speed(qreal)), &copyDlg, SLOT(sltSpeed(qreal)));
+
+
+	connect(&copyThread, SIGNAL(workFinished()), &delDlg, SLOT(sltQuit()));
+	connect(&copyThread, SIGNAL(total(int, qint64)), &delDlg, SLOT(setTotal(int, qint64)));
+	connect(&copyThread, SIGNAL(curItem(QString, QString)), &delDlg, SLOT(setCurItem(QString, QString)));
+	connect(&copyThread, SIGNAL(curFinished(qint64, int)), &delDlg, SLOT(setCurPos(qint64, int)));
 	
 	connect(&copyDlg, SIGNAL(wantQuit()), this, SLOT(sltWantCancelCopy()));
 
@@ -130,15 +136,28 @@ CSafeUExplorer::CSafeUExplorer(QWidget *parent) :
 
     QString localDesktop = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     refreshLocalFs(localDesktop);
+	QLabel *msgLabel = new QLabel;
 
+	msgLabel->setStyleSheet(" QLabel{ color: grey }");
+
+	msgLabel->setText("V1.0.1");
+
+	statusBar()->addWidget(msgLabel);
 }
 
 void CSafeUExplorer::sltDelUDiskFile(QModelIndex index)
 {
 	QTableWidgetItem * item = ui->twSafeUDisk->item(index.row(), 0);
-	qDebug() << "Del" <<  item->data(Qt::UserRole).toString();
-	copyThread.RemovePath(item->data(Qt::UserRole).toString());
-	refreshUDiskFs(ui->leUDisk->text());
+    //qDebug() << "Del" <<  item->data(Qt::UserRole).toString();
+    //copyThread.RemovePath(item->data(Qt::UserRole).toString());
+	copyThread.m_DelItemList.append(item->data(Qt::UserRole).toString());
+	copyThread.m_bQuit = false;
+    delDlg.init();
+    delDlg.setModal(true);
+	copyThread.start();
+	delDlg.exec();
+    QString uCurPath = ui->leUDisk->text();
+    refreshUDiskFs(uCurPath);
 }
 
 void CSafeUExplorer::sltFormat(bool)
@@ -213,7 +232,7 @@ void CSafeUExplorer::sltAcceptLocalItemList(QList<int> list)
 	for (auto row : list) {
 		//qDebug() << row;
 		QTableWidgetItem * item = ui->twLocal->item(row, 0);
-		qDebug() << item->data(Qt::UserRole).toString();
+        //qDebug() << item->data(Qt::UserRole).toString();
 		CopyItem copyItem;
 		copyItem.source = item->data(Qt::UserRole).toString();
 		copyItem.sourceType = FTLDRIVE;
@@ -229,7 +248,8 @@ void CSafeUExplorer::sltAcceptLocalItemList(QList<int> list)
 	copyThread.start();
 	copyDlg.setModal(true);
 	copyDlg.exec();
-	refreshUDiskFs(ui->leUDisk->text());
+    QString curUPath = ui->leUDisk->text();
+    refreshUDiskFs(curUPath);
 }
 
 
@@ -255,7 +275,8 @@ void CSafeUExplorer::sltAcceptUDiskItemList(QList<int> list)
 	copyDlg.init();
 	copyDlg.setModal(true);
 	copyDlg.exec();
-	refreshLocalFs(ui->leLocal->text());
+    QString lcurPath = ui->leLocal->text();
+    refreshLocalFs(lcurPath);
 }
 
 void CSafeUExplorer::sltWantCancelCopy()
@@ -292,7 +313,7 @@ void CSafeUExplorer::refreshUDiskFs(QString &dirpath)
 	struct exfat * ef = m_pGlobalModel->ef;
 	int rc;
 	struct exfat_node * pdir;
-	char utf8str[EXFAT_UTF8_NAME_BUFFER_MAX] = { 0 };
+    //char utf8str[EXFAT_UTF8_NAME_BUFFER_MAX] = { 0 };
 	int j = 0;
 	QFileIconProvider icon_provider;
 	QTableWidgetItem * col1Item = nullptr;
@@ -436,7 +457,9 @@ void CSafeUExplorer::sltUDiskItemClicked(QModelIndex index)
 {
 	QTableWidgetItem * item = ui->twSafeUDisk->item(index.row(), 0);
 	QString absPath = item->data(Qt::UserRole).toString();
-	qDebug() << absPath;
+	if (absPath.endsWith("/"))
+		absPath = absPath.left(absPath.length() - 1);
+    //qDebug() << absPath;
 	struct exfat_node * pdir;
 	struct exfat * ef = m_pGlobalModel->ef;
 	if (ef && ef->dev) {
@@ -477,5 +500,5 @@ CSafeUExplorer::~CSafeUExplorer()
 
 void CSafeUExplorer::findLocalItem(QString & abspath)
 {
-	QModelIndex findidx = m_pGlobalModel->findLocalItem(abspath);
+    //QModelIndex findidx = m_pGlobalModel->findLocalItem(abspath);
 }

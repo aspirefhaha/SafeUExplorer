@@ -23,13 +23,17 @@ CGlobalModel::CGlobalModel(QObject *parent)
     //QStringList resultDriversName;
 
 	ef = new (struct exfat);
+	memset(ef, 0, sizeof(struct exfat));
 	exfat_mount(ef, "nothing", "rw");
+	if (!ef->dev) {
+		OutputDebugString("Mount Failed");
+	}
     FSPrivate * pRootItem = new FSPrivate(FTUSAFE,tr("SafeUDiskDataZone"),0,0,"/",NULL,ef);
     m_rootDrives.append(pRootItem);
 	m_allItems.append(pRootItem);
     foreach (QFileInfo my_info, QDir::drives())
     {
-        //resultDriversName.push_back(my_info.absolutePath());
+        //resultDriversName.push_back(my_info.absolutePath());`
         QString vl = GetVolumeLabel(my_info.absolutePath());
         //qDebug() << "VolumeName:" << vl;
         QString label = my_info.absolutePath();
@@ -39,6 +43,7 @@ CGlobalModel::CGlobalModel(QObject *parent)
         if(!vl.isEmpty()){
             label = vl+"(" + label + ")";
         }
+		qDebug() << "Name:" << label << " size " << QString::number(my_info.size());
         pRootItem = new FSPrivate(FTLDRIVE,label,0,0,my_info.absolutePath(),NULL);
         m_rootDrives.append(pRootItem);
         m_allItems.append(pRootItem);

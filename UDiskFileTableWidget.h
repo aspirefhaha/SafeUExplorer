@@ -26,7 +26,9 @@ protected:
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 	QModelIndex m_selIndex;
 	QMenu *menu;
+	QMenu *menuProperty;
 	QAction *pnew ;
+	QAction * propertyAction;
 };
 
 #endif // UDISKFILETABLEWIDGET_H

@@ -26,6 +26,7 @@ public:
 	void addUDiskSourceToRealItems(CopyItem diritem);
 	void RemovePath(QString path);
 	struct exfat * ef;
+	QList<QString> m_DelItemList;
 
 Q_SIGNALS:
 	void total(int total, qint64 totalsize);
@@ -33,12 +34,16 @@ Q_SIGNALS:
 	void curItem(QString source, QString target);
 	void curFileProg(qint64 filesize, qint64  finishedsize);
 	void speed(qreal speed);
-	void copyFinished();
+	void workFinished();
 
 protected:
     void run() override;
 	void removeUDiskFile(struct exfat_node * pnode);
 	void removeUDiskDir(struct exfat_node * pnode);
+
+private:
+	void addUDiskDelSubFiles(QString curpath,struct exfat_node * pnode, QList<QString> & list);
+	void addUDiskDelFile(QString filename, QList<QString> & list);
 };
 
 #endif // BGCOPYTHREAD_H

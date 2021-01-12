@@ -34,15 +34,19 @@ QString GetVolumeLabel(QString path)
     DWORD nFileSystemNameSize=10;// 分区类型的长指针变量所指向的字符串长度
     DWORD FileSystemFlags;// 文件系统的一此标志
 
-    GetVolumeInformation((LPTSTR)path.utf16(),
-      lpVolumeNameBuffer, nVolumeNameSize,
-      &VolumeSerialNumber, &MaximumComponentLength,
-      &FileSystemFlags,
-      lpFileSystemNameBuffer, nFileSystemNameSize);
+	if (GetVolumeInformation((LPTSTR)path.utf16(),
+		lpVolumeNameBuffer, nVolumeNameSize,
+		&VolumeSerialNumber, &MaximumComponentLength,
+		&FileSystemFlags,
+		lpFileSystemNameBuffer, nFileSystemNameSize)) {
+		qDebug() << "SerialNumber:" << QString::number(VolumeSerialNumber, 16);
 
-    //qDebug() << "SerialNumber:" << QString::number(VolumeSerialNumber,16);
-
-    return QString::fromUtf16((ushort *)lpVolumeNameBuffer);
+		return QString::fromUtf16((ushort *)lpVolumeNameBuffer);
+	}
+	else {
+		return QString("");
+	}
+    
 
 }
 

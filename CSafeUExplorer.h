@@ -7,6 +7,7 @@
 #include "BGCopyThread.h"
 #include "CGlobalModel.h"
 #include "CopyDlg.h"
+#include "DelDlg.h"
 
 namespace Ui {
 class CSafeUExplorer;
@@ -46,6 +47,7 @@ private:
 	void findLocalItem(QString &abspath);
 	BGCopyThread copyThread;
 	CopyDlg copyDlg;
+    DelDlg delDlg;
 };
 
 #endif // CSAFEUEXPLORER_H

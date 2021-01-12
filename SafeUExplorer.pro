@@ -38,6 +38,7 @@ SOURCES +=  \
         CLocalModel.cpp \
         CommonTools.cpp \
         CopyDlg.cpp \
+        DelDlg.cpp \
         FileTableWidget.cpp \
         UDiskFileTableWidget.cpp \
         main.cpp \
@@ -72,6 +73,7 @@ HEADERS += \
         CommonTools.h \
         CopyDlg.h \
         CopyItem.h \
+        DelDlg.h \
         FileTableWidget.h \
         FsItemType.h \
         UDiskFileTableWidget.h
@@ -80,7 +82,8 @@ FORMS += \
         CFormatDlg.ui \
         CInputKeyDlg.ui \
         CSafeUExplorer.ui \
-        CopyDlg.ui
+        CopyDlg.ui \
+        DelDlg.ui
 
 RESOURCES += \
     safeuexplorer.qrc

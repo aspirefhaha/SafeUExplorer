@@ -304,7 +304,7 @@
         <location filename="CSafeUExplorer.cpp" line="128"/>
         <location filename="CSafeUExplorer.cpp" line="203"/>
         <source>Hide Partition Not Formated!</source>
-        <translation>隐藏分区未格式化或未授权！</translation>
+        <translation>隐藏分区未格式化！</translation>
     </message>
     <message>
         <location filename="CSafeUExplorer.cpp" line="146"/>
