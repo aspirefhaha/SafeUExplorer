@@ -21,7 +21,7 @@ UDiskFileTableWidget::UDiskFileTableWidget(QWidget * parent)
 	menu->addAction(pnew);
 	menuProperty = new QMenu(this);
 	propertyAction = new QAction(tr("Property"), this);
-	connect(propertyAction, SIGNAL(triggered()), this, SLOT(clickproperty()));
+	//connect(propertyAction, SIGNAL(triggered()), this, SLOT(clickproperty()));
 	menuProperty->addAction(propertyAction);
 }
 
@@ -38,12 +38,14 @@ void UDiskFileTableWidget::show_menu(QPoint pt)
 	QList<QTableWidgetItem*>items = selectedItems();
 
 	int count = items.count() / this->columnCount();
-	if (count > 1)
+	/*if (count > 1)
 	{
 		menuProperty->move(cursor().pos());
 		menuProperty->show();
 		return;
-	}
+	}*/
+	
+	//std::sort(vecItemIndex.begin(), vecItemIndex.end());
 	m_selIndex = this->indexAt(pt);
 	QTableWidgetItem * pitem = item(m_selIndex.row(), 0);
 	if (pitem) {
@@ -59,7 +61,15 @@ void UDiskFileTableWidget::show_menu(QPoint pt)
 void UDiskFileTableWidget::clickgoose()
 {
 	//int row = index.row();//获得QTableWidget列表点击的行数 
-	emit DelUdiskItem(m_selIndex);
+	//std::vector<int> vecItemIndex;//保存选中行的索引
+	QItemSelectionModel *selections = this->selectionModel(); //返回当前的选择模式  
+	QModelIndexList selectedsList = selections->selectedIndexes(); //返回所有选定的模型项目索引列表  
+
+	//for (int i = 0; i < selectedsList.count(); i++)
+	//{
+	//	//vecItemIndex.push_back(selectedsList.at(i).row());
+	//}
+	emit DelUdiskItem(selectedsList);
 }
 
 void UDiskFileTableWidget::mousePressEvent(QMouseEvent *event)

@@ -73,12 +73,12 @@
 <context>
     <name>CGlobalModel</name>
     <message>
-        <location filename="CGlobalModel.cpp" line="27"/>
+        <location filename="CGlobalModel.cpp" line="31"/>
         <source>SafeUDiskDataZone</source>
         <translation>安全U盘数据区</translation>
     </message>
     <message>
-        <location filename="CGlobalModel.cpp" line="157"/>
+        <location filename="CGlobalModel.cpp" line="162"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
@@ -265,64 +265,74 @@
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="60"/>
+        <location filename="CSafeUExplorer.cpp" line="66"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="60"/>
+        <location filename="CSafeUExplorer.cpp" line="66"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="60"/>
+        <location filename="CSafeUExplorer.cpp" line="66"/>
         <source>Type</source>
         <translation>类型</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="60"/>
+        <location filename="CSafeUExplorer.cpp" line="66"/>
         <source>Date Modified</source>
         <translation>修改日期</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="122"/>
-        <location filename="CSafeUExplorer.cpp" line="157"/>
+        <location filename="CSafeUExplorer.cpp" line="135"/>
+        <location filename="CSafeUExplorer.cpp" line="185"/>
         <source>SafeUDisk(%1GB)</source>
         <translation>安全U盘 (%1GB)</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="128"/>
+        <location filename="CSafeUExplorer.cpp" line="141"/>
         <source>Mount Failed!</source>
         <translation>挂载失败！</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="203"/>
+        <location filename="CSafeUExplorer.cpp" line="258"/>
+        <source>Unplug Unexpected</source>
+        <translation>错误操作</translation>
+    </message>
+    <message>
+        <location filename="CSafeUExplorer.cpp" line="258"/>
+        <source>Unplug SafeUDisk at Inappropriate Time! Data May be Damanged!!!!</source>
+        <translation>未按预期方式使用安全U盘，已经对数据造成了一定的破坏，有可能对隐藏文件系统造成彻底的损坏!!!!</translation>
+    </message>
+    <message>
+        <location filename="CSafeUExplorer.cpp" line="308"/>
         <source>Not Formated!</source>
         <translation>TF卡未格式化或未授权！</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="128"/>
-        <location filename="CSafeUExplorer.cpp" line="203"/>
+        <location filename="CSafeUExplorer.cpp" line="141"/>
+        <location filename="CSafeUExplorer.cpp" line="308"/>
         <source>Hide Partition Not Formated!</source>
         <translation>隐藏分区未格式化！</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="146"/>
+        <location filename="CSafeUExplorer.cpp" line="174"/>
         <source>Data Lost Warning</source>
         <translation>数据丢失警告</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="146"/>
+        <location filename="CSafeUExplorer.cpp" line="174"/>
         <source>Format Fs will Lost All Data in both Normal and Hide Partition,Continue?</source>
         <translation>分区和格式化文件系统将导致普通分区和隐藏分区的所有数据丢失，是否继续？</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="161"/>
+        <location filename="CSafeUExplorer.cpp" line="189"/>
         <source>Format Operation Succeed!</source>
         <translation>格式化操作成功！</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="165"/>
+        <location filename="CSafeUExplorer.cpp" line="193"/>
         <source>TF Card Failed or  Not Authoried!!!</source>
         <translation>TF卡读取失败或未授权！！！</translation>
     </message>
@@ -335,7 +345,7 @@
         <translation type="vanished">隐藏分区文件系统格式化需要再次插拔TF卡，插拔完成后点击“YES”</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="161"/>
+        <location filename="CSafeUExplorer.cpp" line="189"/>
         <source>Succeed</source>
         <translation>成功</translation>
     </message>
@@ -344,7 +354,7 @@
         <translation type="vanished">分区和格式化操作完成</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="165"/>
+        <location filename="CSafeUExplorer.cpp" line="193"/>
         <source>Format Failed</source>
         <translation>格式化失败</translation>
     </message>
@@ -353,14 +363,14 @@
         <translation type="vanished">隐藏分区格式化取消，只有普通分区能正常使用！</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="367"/>
-        <location filename="CSafeUExplorer.cpp" line="423"/>
+        <location filename="CSafeUExplorer.cpp" line="479"/>
+        <location filename="CSafeUExplorer.cpp" line="535"/>
         <source>File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="343"/>
-        <location filename="CSafeUExplorer.cpp" line="406"/>
+        <location filename="CSafeUExplorer.cpp" line="455"/>
+        <location filename="CSafeUExplorer.cpp" line="518"/>
         <source>Dir</source>
         <translation>文件夹</translation>
     </message>
@@ -426,11 +436,46 @@
     </message>
 </context>
 <context>
+    <name>DelDlg</name>
+    <message>
+        <location filename="DelDlg.ui" line="14"/>
+        <source>删除窗口</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="DelDlg.ui" line="22"/>
+        <location filename="DelDlg.ui" line="29"/>
+        <location filename="DelDlg.ui" line="43"/>
+        <source>当前项目</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="DelDlg.ui" line="36"/>
+        <source>进度</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="DelDlg.ui" line="77"/>
+        <source>继续</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="DelDlg.ui" line="97"/>
+        <source>取消</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>UDiskFileTableWidget</name>
     <message>
         <location filename="UDiskFileTableWidget.cpp" line="19"/>
         <source>Del</source>
         <translation>删除</translation>
+    </message>
+    <message>
+        <location filename="UDiskFileTableWidget.cpp" line="23"/>
+        <source>Property</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
 		ret = a.exec();
 	}
 	else {
+		qApp->installNativeEventFilter((QAbstractNativeEventFilter*)&inputDlg);
 		inputDlg.setModal(true);
 		if (inputDlg.exec() == QDialog::Accepted) {
 			CSafeUExplorer w;

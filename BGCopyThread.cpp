@@ -164,7 +164,7 @@ void BGCopyThread::run()
 	if (ef == NULL || ef->dev == NULL)
 		m_bQuit = true;
 
-	qDebug() << "calculating...";
+	//qDebug() << "calculating...";
 	if (m_DelItemList.size() > 0 && !m_bQuit) {
 		QList<QString> realdelitems;
 		foreach(auto delitem, m_DelItemList) {

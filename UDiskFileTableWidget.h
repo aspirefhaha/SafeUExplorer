@@ -15,7 +15,7 @@ public:
 signals:
     void startDrag();
 	void acceptItemList(QList<int>);
-	void DelUdiskItem(QModelIndex);
+	void DelUdiskItem(QList<QModelIndex>);
 
 protected slots:
 	void show_menu(QPoint);

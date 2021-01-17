@@ -28,6 +28,9 @@ protected Q_SLOTS:
 	void sltUDiskItemClicked(QModelIndex);
     void sltRefresh(bool);
 	void sltDesktop(bool);
+	void sltUpfolder(bool);
+	void sltLocalCellClick(int, int);
+	void sltUDiskCellClick(int, int);
 	void sltQuit(bool);
     void sltLocalStartDrag();
     void sltUDiskStartDrag();
@@ -35,10 +38,13 @@ protected Q_SLOTS:
 	void sltAcceptUDiskItemList(QList<int> list);
 	void sltWantCancelCopy();
 	void sltFormat(bool);
-	void sltDelUDiskFile(QModelIndex);
+	void sltDelUDiskFile(QList<QModelIndex>);
+protected:
+	bool nativeEvent(const QByteArray &eventType, void *message, long *result);
 
 private:
     Ui::CSafeUExplorer *ui;
+	bool udiskFocused;
 
     CGlobalModel * m_pGlobalModel;
 

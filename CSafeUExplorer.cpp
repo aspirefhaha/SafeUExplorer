@@ -14,8 +14,18 @@
 #include "CopyDlg.h"
 #include <QMessageBox>
 #include <QInputDialog>
+
+#include <Windows.h>
+#include <dbt.h>
 #include "CFormatDlg.h"
 #include "mkexfat.h"
+#include "sdcryptostor.h"
+
+/**
+1.0.1 发布
+1.0.2 加快读写速度
+1.0.3 增加对USB插拔设备的监视
+*/
 
 #define SIZECOLWIDTH 70
 #define NAMECOLWIDTH 200
@@ -24,9 +34,11 @@
 CSafeUExplorer::CSafeUExplorer(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::CSafeUExplorer),
-	copyThread(this)
+	copyThread(this),
+	udiskFocused(false)
 {
     ui->setupUi(this);
+	
 
     ui->mainToolBar->addAction(ui->actionDesktop);
     ui->mainToolBar->addAction(ui->actionUpFolder);
@@ -101,10 +113,11 @@ CSafeUExplorer::CSafeUExplorer(QWidget *parent) :
 	connect(ui->twLocal, SIGNAL(acceptItemList(QList<int>)), this, SLOT(sltAcceptUDiskItemList(QList<int>)));
 	connect(ui->twSafeUDisk, SIGNAL(acceptItemList(QList<int>)), this, SLOT(sltAcceptLocalItemList(QList<int>)));
 
-	connect(ui->twSafeUDisk, SIGNAL(DelUdiskItem(QModelIndex)), this, SLOT(sltDelUDiskFile(QModelIndex)));
+	connect(ui->twSafeUDisk, SIGNAL(DelUdiskItem(QList<QModelIndex>)), this, SLOT(sltDelUDiskFile(QList<QModelIndex>)));
 
     connect(ui->actionRefresh,SIGNAL(triggered(bool)),this,SLOT(sltRefresh(bool)));
 	connect(ui->actionDesktop, SIGNAL(triggered(bool)), this, SLOT(sltDesktop(bool)));
+	connect(ui->actionUpFolder, SIGNAL(triggered(bool)), this, SLOT(sltUpfolder(bool)));
 	connect(ui->actionQuit, SIGNAL(triggered(bool)), this, SLOT(sltQuit(bool)));
 	connect(ui->actionFormatUDisk, SIGNAL(triggered(bool)), this, SLOT(sltFormat(bool)));
 
@@ -140,17 +153,19 @@ CSafeUExplorer::CSafeUExplorer(QWidget *parent) :
 
 	msgLabel->setStyleSheet(" QLabel{ color: grey }");
 
-	msgLabel->setText("V1.0.1");
+	msgLabel->setText("V1.0.3");
 
 	statusBar()->addWidget(msgLabel);
 }
 
-void CSafeUExplorer::sltDelUDiskFile(QModelIndex index)
+void CSafeUExplorer::sltDelUDiskFile(QList<QModelIndex> indexs)
 {
-	QTableWidgetItem * item = ui->twSafeUDisk->item(index.row(), 0);
+	foreach(auto index , indexs) {
+		QTableWidgetItem * item = ui->twSafeUDisk->item(index.row(), 0);
+		copyThread.m_DelItemList.append(item->data(Qt::UserRole).toString());
+	}
     //qDebug() << "Del" <<  item->data(Qt::UserRole).toString();
     //copyThread.RemovePath(item->data(Qt::UserRole).toString());
-	copyThread.m_DelItemList.append(item->data(Qt::UserRole).toString());
 	copyThread.m_bQuit = false;
     delDlg.init();
     delDlg.setModal(true);
@@ -186,6 +201,84 @@ void CSafeUExplorer::sltFormat(bool)
 
 	}
 	
+}
+
+void CSafeUExplorer::sltUpfolder(bool checked)
+{
+	Q_UNUSED(checked)
+	if (udiskFocused) {
+		if (m_pGlobalModel->ef==NULL)
+			return;
+		QString dirpath = ui->leUDisk->text();
+		int pos1 = dirpath.lastIndexOf('/');
+		if (pos1 == -1) {
+			QString udiskrootdir = "/";
+			refreshUDiskFs(udiskrootdir);
+			return;
+		}
+		QString parentpath = dirpath.mid(0, pos1);
+		if (parentpath == "")
+			parentpath = "/";
+		refreshUDiskFs(parentpath);
+	}
+	else {
+		QString localcurfolder = ui->leLocal->text() + "/..";
+		QDir dir(localcurfolder);
+		QString upfolder =dir.absolutePath();
+		refreshLocalFs(upfolder);
+	}
+}
+
+bool CSafeUExplorer::nativeEvent(const QByteArray &eventType, void *message, long *result)
+{
+	MSG* msg = reinterpret_cast<MSG*>(message);
+	int msgType = msg->message;
+	if (msgType == WM_DEVICECHANGE)
+	{
+		PDEV_BROADCAST_HDR lpdb = (PDEV_BROADCAST_HDR)msg->lParam;
+		switch (msg->wParam) {
+		case DBT_DEVICEARRIVAL:
+
+			if (lpdb->dbch_devicetype == DBT_DEVTYP_VOLUME)
+			{
+				PDEV_BROADCAST_VOLUME lpdbv = (PDEV_BROADCAST_VOLUME)lpdb;
+				if (lpdbv->dbcv_flags == 0)
+				{
+					qDebug() << __FUNCTION__ << "u disk come";
+					//emit sigUDiskCome();
+				}
+			}
+			break;
+		case DBT_DEVICEREMOVECOMPLETE:
+			if (lpdb->dbch_devicetype == DBT_DEVTYP_VOLUME)
+			{
+				PDEV_BROADCAST_VOLUME lpdbv = (PDEV_BROADCAST_VOLUME)lpdb;
+				if (lpdbv->dbcv_flags == 0)
+				{
+					qDebug() << __FUNCTION__ << "u disk remove";
+					char kName[256] = { 0 };
+					char * sName = kName;
+					DWORD len = 0;
+					int retenctype = -1;
+					int enuret = sd_EnumDevice(&sName, &len);
+					if (enuret != SDR_OK) {
+						QMessageBox::warning(this, tr("Unplug Unexpected"), tr("Unplug SafeUDisk at Inappropriate Time! Data May be Damanged!!!!"));
+						this->close();
+
+					}
+					//emit sigUDiskRemove();
+				}
+			}
+			break;
+		case DBT_DEVNODES_CHANGED:
+		{
+			qDebug() << "USB_change";
+		}
+		break;
+		}
+	}
+	return QWidget::nativeEvent(eventType, message, result);
+
 }
 
 void CSafeUExplorer::sltDesktop(bool checked)
@@ -320,8 +413,13 @@ void CSafeUExplorer::refreshUDiskFs(QString &dirpath)
 	//ui->twSafeUDisk->clear();
 	if (ef==NULL || ef->dev == NULL)
 		return;
-	ui->leUDisk->setText(dirpath);
-	rc = exfat_lookup(ef, &pdir, dirpath.toUtf8().data());
+	QString realpath = dirpath;
+	if (dirpath != "/") {
+		if (dirpath.endsWith("/"))
+			realpath = dirpath.mid(0, dirpath.length() - 1);
+	}
+	ui->leUDisk->setText(realpath);
+	rc = exfat_lookup(ef, &pdir, realpath.toUtf8().data());
 	if (rc != 0)
 		return;
 	struct exfat_node* node;
@@ -338,10 +436,10 @@ void CSafeUExplorer::refreshUDiskFs(QString &dirpath)
 		}
 		ui->twSafeUDisk->setRowCount(itemcount+1);
 		col1Item = new QTableWidgetItem(icon_provider.icon(QFileIconProvider::Folder), "..");
-		//col1Item->setData(Qt::UserRole, dirpath + "/..");
+		//col1Item->setData(Qt::UserRole, realpath + "/..");
         QString parentpath ;
-        int pos1 = dirpath.lastIndexOf('/');
-        parentpath = dirpath.mid(0,pos1+1);
+        int pos1 = realpath.lastIndexOf('/');
+        parentpath = realpath.mid(0,pos1+1);
         col1Item->setData(Qt::UserRole, parentpath);
 		ui->twSafeUDisk->setItem(j, 0, col1Item);
 		j++;
@@ -455,9 +553,14 @@ void CSafeUExplorer::refreshLocalFs(QString &dirpath)
 
 void CSafeUExplorer::sltUDiskItemClicked(QModelIndex index)
 {
+	udiskFocused = true;
 	QTableWidgetItem * item = ui->twSafeUDisk->item(index.row(), 0);
 	QString absPath = item->data(Qt::UserRole).toString();
-	if (absPath.endsWith("/"))
+	if (absPath == "/")
+	{
+
+	}
+	else if (absPath.endsWith("/"))
 		absPath = absPath.left(absPath.length() - 1);
     //qDebug() << absPath;
 	struct exfat_node * pdir;
@@ -473,8 +576,20 @@ void CSafeUExplorer::sltUDiskItemClicked(QModelIndex index)
 		
 }
 
+void CSafeUExplorer::sltLocalCellClick(int, int)
+{
+	qDebug() << "local cell";
+	udiskFocused = false;
+}
+void CSafeUExplorer::sltUDiskCellClick(int, int)
+{
+	qDebug() << "disk cell";
+	udiskFocused = true;
+}
+
 void CSafeUExplorer::sltLocalItemClicked(QModelIndex index)
 {
+	udiskFocused = false;
     QTableWidgetItem * item = ui->twLocal->item(index.row(),0);
     QString absPath = item->data(Qt::UserRole).toString();
     //qDebug() << absPath;

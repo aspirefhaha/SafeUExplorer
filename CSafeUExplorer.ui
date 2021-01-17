@@ -239,10 +239,44 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>twSafeUDisk</sender>
+   <signal>cellClicked(int,int)</signal>
+   <receiver>CSafeUExplorer</receiver>
+   <slot>sltUDiskCellClick(int,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>530</x>
+     <y>234</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>76</x>
+     <y>460</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>twLocal</sender>
+   <signal>cellClicked(int,int)</signal>
+   <receiver>CSafeUExplorer</receiver>
+   <slot>sltLocalCellClick(int,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>868</x>
+     <y>379</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>891</x>
+     <y>458</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>sltItemClicked(QModelIndex)</slot>
   <slot>sltLocalItemClicked(QModelIndex)</slot>
   <slot>sltUDiskItemClicked(QModelIndex)</slot>
+  <slot>sltUDiskCellClick(int,int)</slot>
+  <slot>sltLocalCellClick(int,int)</slot>
  </slots>
 </ui>
