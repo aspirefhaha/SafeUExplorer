@@ -118,7 +118,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="CInputKeyDlg.ui" line="45"/>
+        <location filename="CInputKeyDlg.ui" line="49"/>
         <source>登录</source>
         <translation type="unfinished"></translation>
     </message>
@@ -152,8 +152,8 @@
     </message>
     <message>
         <location filename="CInputKeyDlg.cpp" line="53"/>
-        <source>Open TF Card Failed!</source>
-        <translation>打开TF卡失败！</translation>
+        <source>Open TF Card Failed Or Hide Partition Not Exists!</source>
+        <translation>打开TF卡设备失败或隐藏分区不存在！</translation>
     </message>
     <message>
         <location filename="CInputKeyDlg.cpp" line="56"/>
@@ -265,74 +265,74 @@
         <translation>退出</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="66"/>
+        <location filename="CSafeUExplorer.cpp" line="75"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="66"/>
+        <location filename="CSafeUExplorer.cpp" line="75"/>
         <source>Size</source>
         <translation>大小</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="66"/>
+        <location filename="CSafeUExplorer.cpp" line="75"/>
         <source>Type</source>
         <translation>类型</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="66"/>
+        <location filename="CSafeUExplorer.cpp" line="75"/>
         <source>Date Modified</source>
         <translation>修改日期</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="135"/>
-        <location filename="CSafeUExplorer.cpp" line="185"/>
+        <location filename="CSafeUExplorer.cpp" line="144"/>
+        <location filename="CSafeUExplorer.cpp" line="194"/>
         <source>SafeUDisk(%1GB)</source>
         <translation>安全U盘 (%1GB)</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="141"/>
+        <location filename="CSafeUExplorer.cpp" line="150"/>
         <source>Mount Failed!</source>
         <translation>挂载失败！</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="258"/>
+        <location filename="CSafeUExplorer.cpp" line="268"/>
         <source>Unplug Unexpected</source>
         <translation>错误操作</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="258"/>
+        <location filename="CSafeUExplorer.cpp" line="268"/>
         <source>Unplug SafeUDisk at Inappropriate Time! Data May be Damanged!!!!</source>
         <translation>未按预期方式使用安全U盘，已经对数据造成了一定的破坏，有可能对隐藏文件系统造成彻底的损坏!!!!</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="308"/>
+        <location filename="CSafeUExplorer.cpp" line="327"/>
         <source>Not Formated!</source>
         <translation>TF卡未格式化或未授权！</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="141"/>
-        <location filename="CSafeUExplorer.cpp" line="308"/>
+        <location filename="CSafeUExplorer.cpp" line="150"/>
+        <location filename="CSafeUExplorer.cpp" line="327"/>
         <source>Hide Partition Not Formated!</source>
         <translation>隐藏分区未格式化！</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="174"/>
+        <location filename="CSafeUExplorer.cpp" line="183"/>
         <source>Data Lost Warning</source>
         <translation>数据丢失警告</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="174"/>
+        <location filename="CSafeUExplorer.cpp" line="183"/>
         <source>Format Fs will Lost All Data in both Normal and Hide Partition,Continue?</source>
         <translation>分区和格式化文件系统将导致普通分区和隐藏分区的所有数据丢失，是否继续？</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="189"/>
+        <location filename="CSafeUExplorer.cpp" line="198"/>
         <source>Format Operation Succeed!</source>
         <translation>格式化操作成功！</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="193"/>
+        <location filename="CSafeUExplorer.cpp" line="202"/>
         <source>TF Card Failed or  Not Authoried!!!</source>
         <translation>TF卡读取失败或未授权！！！</translation>
     </message>
@@ -345,7 +345,7 @@
         <translation type="vanished">隐藏分区文件系统格式化需要再次插拔TF卡，插拔完成后点击“YES”</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="189"/>
+        <location filename="CSafeUExplorer.cpp" line="198"/>
         <source>Succeed</source>
         <translation>成功</translation>
     </message>
@@ -354,7 +354,7 @@
         <translation type="vanished">分区和格式化操作完成</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="193"/>
+        <location filename="CSafeUExplorer.cpp" line="202"/>
         <source>Format Failed</source>
         <translation>格式化失败</translation>
     </message>
@@ -363,14 +363,14 @@
         <translation type="vanished">隐藏分区格式化取消，只有普通分区能正常使用！</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="479"/>
-        <location filename="CSafeUExplorer.cpp" line="535"/>
+        <location filename="CSafeUExplorer.cpp" line="498"/>
+        <location filename="CSafeUExplorer.cpp" line="554"/>
         <source>File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="455"/>
-        <location filename="CSafeUExplorer.cpp" line="518"/>
+        <location filename="CSafeUExplorer.cpp" line="474"/>
+        <location filename="CSafeUExplorer.cpp" line="537"/>
         <source>Dir</source>
         <translation>文件夹</translation>
     </message>
@@ -466,6 +466,19 @@
     </message>
 </context>
 <context>
+    <name>QObject</name>
+    <message>
+        <location filename="main.cpp" line="21"/>
+        <source>No TF Card</source>
+        <translation>没有TF卡</translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="21"/>
+        <source>Can Not Found a TF Card,or Hide Partition Size is Zero!</source>
+        <translation>没有发现TF卡设备，或隐藏分区大小为0！</translation>
+    </message>
+</context>
+<context>
     <name>UDiskFileTableWidget</name>
     <message>
         <location filename="UDiskFileTableWidget.cpp" line="19"/>
@@ -475,7 +488,7 @@
     <message>
         <location filename="UDiskFileTableWidget.cpp" line="23"/>
         <source>Property</source>
-        <translation type="unfinished"></translation>
+        <translation>属性</translation>
     </message>
 </context>
 </TS>

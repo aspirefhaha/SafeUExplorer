@@ -50,7 +50,7 @@ void CInputKeyDlg::sltConfirm()
 			switch (getenctype) {
 			case -1:
 			case -2:
-				QMessageBox::warning(this, tr("Open Failed"), tr("Open TF Card Failed!"));
+				QMessageBox::warning(this, tr("Open Failed"), tr("Open TF Card Failed Or Hide Partition Not Exists!"));
 				break;
 			case -3:
 				QMessageBox::warning(this, tr("Open Failed"), tr("GetCap Failed!"));

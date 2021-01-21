@@ -20,11 +20,14 @@
 #include "CFormatDlg.h"
 #include "mkexfat.h"
 #include "sdcryptostor.h"
+#include <windowsx.h>
 
 /**
 1.0.1 发布
 1.0.2 加快读写速度
 1.0.3 增加对USB插拔设备的监视
+1.0.4 修改了输入框不显示的问题
+1.0.5 输入框密码改成*
 */
 
 #define SIZECOLWIDTH 70
@@ -153,7 +156,7 @@ CSafeUExplorer::CSafeUExplorer(QWidget *parent) :
 
 	msgLabel->setStyleSheet(" QLabel{ color: grey }");
 
-	msgLabel->setText("V1.0.3");
+	msgLabel->setText("V1.0.4");
 
 	statusBar()->addWidget(msgLabel);
 }
@@ -277,7 +280,16 @@ bool CSafeUExplorer::nativeEvent(const QByteArray &eventType, void *message, lon
 		break;
 		}
 	}
-	return QWidget::nativeEvent(eventType, message, result);
+	else if (msg->message == WM_GETMINMAXINFO || msg->message == WM_NCCREATE
+				|| msg->message == WM_NCCALCSIZE
+				|| msg->message == WM_CREATE
+				|| msg->message == WM_SIZE
+				|| msg->message == WM_MOVE)
+	{
+		return false;
+	}
+	
+	return QMainWindow::nativeEvent(eventType, message, result);
 
 }
 
