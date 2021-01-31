@@ -28,6 +28,7 @@
 1.0.3 增加对USB插拔设备的监视
 1.0.4 修改了输入框不显示的问题
 1.0.5 输入框密码改成*
+1.0.6 拷贝的时候判断剩余空间，增加了文件系统剩余空间显示
 */
 
 #define SIZECOLWIDTH 70
@@ -130,18 +131,23 @@ CSafeUExplorer::CSafeUExplorer(QWidget *parent) :
 	connect(&copyThread, SIGNAL(curItem(QString, QString)), &copyDlg, SLOT(setCurItem(QString, QString)));
 	connect(&copyThread, SIGNAL(workFinished()), &copyDlg, SLOT(sltQuit()));
 	connect(&copyThread, SIGNAL(speed(qreal)), &copyDlg, SLOT(sltSpeed(qreal)));
+	connect(&copyThread, SIGNAL(LeftSizeError(qint64, qint64)), &copyDlg, SLOT(sltLeftSizeError(qint64, qint64)));
+
+
+	connect(&copyDlg, SIGNAL(finished()), this, SLOT(sltUpdateSize()));
 
 
 	connect(&copyThread, SIGNAL(workFinished()), &delDlg, SLOT(sltQuit()));
 	connect(&copyThread, SIGNAL(total(int, qint64)), &delDlg, SLOT(setTotal(int, qint64)));
 	connect(&copyThread, SIGNAL(curItem(QString, QString)), &delDlg, SLOT(setCurItem(QString, QString)));
 	connect(&copyThread, SIGNAL(curFinished(qint64, int)), &delDlg, SLOT(setCurPos(qint64, int)));
+
+	connect(&delDlg, SIGNAL(finished()), this, SLOT(sltUpdateSize()));
 	
 	connect(&copyDlg, SIGNAL(wantQuit()), this, SLOT(sltWantCancelCopy()));
 
     if(m_pGlobalModel->ef && m_pGlobalModel->ef->dev){
-
-		ui->lbSafeUDisk->setText(tr("SafeUDisk(%1GB)").arg(exfat_get_size(m_pGlobalModel->ef->dev) / 1024LL / 1024LL / 1024LL + 1));
+		updateLeftSize();
         QString udiskrootdir = "/";
         refreshUDiskFs(udiskrootdir);
 		copyThread.ef = m_pGlobalModel->ef;
@@ -156,7 +162,7 @@ CSafeUExplorer::CSafeUExplorer(QWidget *parent) :
 
 	msgLabel->setStyleSheet(" QLabel{ color: grey }");
 
-	msgLabel->setText("V1.0.4");
+	msgLabel->setText("V1.0.6");
 
 	statusBar()->addWidget(msgLabel);
 }
@@ -178,6 +184,20 @@ void CSafeUExplorer::sltDelUDiskFile(QList<QModelIndex> indexs)
     refreshUDiskFs(uCurPath);
 }
 
+void CSafeUExplorer::updateLeftSize()
+{
+	QString firststr = tr("SafeUDisk(%1GB)").arg(exfat_get_size(m_pGlobalModel->ef->dev) / 1024LL / 1024LL / 1024LL + 1);
+	long long leftsize = exfat_count_free_clusters(m_pGlobalModel->ef);
+	leftsize <<= (m_pGlobalModel->ef->sb->spc_bits + m_pGlobalModel->ef->sb->sector_bits);
+	QString secondstr = tr("Left %1").arg(covertHumanString(leftsize));
+	ui->lbSafeUDisk->setText(firststr  + " " + secondstr);
+}
+
+void CSafeUExplorer::sltUpdateSize()
+{
+	updateLeftSize();
+}
+
 void CSafeUExplorer::sltFormat(bool)
 {
 	if (QMessageBox::Yes == QMessageBox::warning(this, tr("Data Lost Warning"), tr("Format Fs will Lost All Data in both Normal and Hide Partition,Continue?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes)) {
@@ -191,7 +211,7 @@ void CSafeUExplorer::sltFormat(bool)
         format_fs();
         if (0 == exfat_mount(m_pGlobalModel->ef, "nothing", "rw")) {
             if (m_pGlobalModel->ef && m_pGlobalModel->ef->dev) {
-				ui->lbSafeUDisk->setText(tr("SafeUDisk(%1GB)").arg(exfat_get_size(m_pGlobalModel->ef->dev) / 1024LL / 1024LL / 1024LL+1));
+				updateLeftSize();
 				copyThread.ef = m_pGlobalModel->ef;
                 QString rootDir = "/";
                 refreshUDiskFs(rootDir);
@@ -446,6 +466,7 @@ void CSafeUExplorer::refreshUDiskFs(QString &dirpath)
 			exfat_put_node(ef, node);
 			itemcount++;
 		}
+		exfat_closedir(ef, &it);
 		ui->twSafeUDisk->setRowCount(itemcount+1);
 		col1Item = new QTableWidgetItem(icon_provider.icon(QFileIconProvider::Folder), "..");
 		//col1Item->setData(Qt::UserRole, realpath + "/..");
@@ -583,6 +604,7 @@ void CSafeUExplorer::sltUDiskItemClicked(QModelIndex index)
 			return;
 		if (pdir->attrib & EXFAT_ATTRIB_DIR)
 			refreshUDiskFs(absPath);
+		exfat_put_node(ef, pdir);
 	}
 	
 		
@@ -595,7 +617,7 @@ void CSafeUExplorer::sltLocalCellClick(int, int)
 }
 void CSafeUExplorer::sltUDiskCellClick(int, int)
 {
-	qDebug() << "disk cell";
+	//qDebug() << "disk cell";
 	udiskFocused = true;
 }
 

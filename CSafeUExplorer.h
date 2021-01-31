@@ -39,6 +39,7 @@ protected Q_SLOTS:
 	void sltWantCancelCopy();
 	void sltFormat(bool);
 	void sltDelUDiskFile(QList<QModelIndex>);
+	void sltUpdateSize();
 protected:
 	bool nativeEvent(const QByteArray &eventType, void *message, long *result);
 
@@ -50,6 +51,7 @@ private:
 
     void refreshLocalFs(QString &dirpath);
 	void refreshUDiskFs(QString &dirpath);
+	void updateLeftSize();
 	void findLocalItem(QString &abspath);
 	BGCopyThread copyThread;
 	CopyDlg copyDlg;

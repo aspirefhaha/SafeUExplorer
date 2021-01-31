@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QTranslator>
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {
@@ -43,5 +44,14 @@ int main(int argc, char *argv[])
 	
     
     return ret;
+}
+
+
+
+extern "C" void MyOutputDebugString(
+	char * lpOutputString
+)
+{
+	qDebug() << lpOutputString;
 }
 

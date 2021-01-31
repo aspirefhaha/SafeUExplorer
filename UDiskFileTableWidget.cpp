@@ -49,7 +49,7 @@ void UDiskFileTableWidget::show_menu(QPoint pt)
 	m_selIndex = this->indexAt(pt);
 	QTableWidgetItem * pitem = item(m_selIndex.row(), 0);
 	if (pitem) {
-		qDebug() << "Del" << pitem->data(Qt::UserRole).toString();
+		qDebug() << "Select" << pitem->data(Qt::UserRole).toString();
 		if (pitem->text() == "..")
 			return;
 		menu->move(cursor().pos());
@@ -62,14 +62,17 @@ void UDiskFileTableWidget::clickgoose()
 {
 	//int row = index.row();//获得QTableWidget列表点击的行数 
 	//std::vector<int> vecItemIndex;//保存选中行的索引
+	QModelIndexList vecItemIndex;
 	QItemSelectionModel *selections = this->selectionModel(); //返回当前的选择模式  
 	QModelIndexList selectedsList = selections->selectedIndexes(); //返回所有选定的模型项目索引列表  
 
-	//for (int i = 0; i < selectedsList.count(); i++)
-	//{
-	//	//vecItemIndex.push_back(selectedsList.at(i).row());
-	//}
-	emit DelUdiskItem(selectedsList);
+	for (int i = 0; i < selectedsList.count(); i++)
+	{
+		//qDebug() << "row " << selectedsList.at(i).row() << " col " << selectedsList.at(i).column();
+		if(selectedsList.at(i).column() == 0)
+			vecItemIndex.push_back(selectedsList.at(i));
+	}
+	emit DelUdiskItem(vecItemIndex);
 }
 
 void UDiskFileTableWidget::mousePressEvent(QMouseEvent *event)

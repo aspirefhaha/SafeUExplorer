@@ -26,6 +26,7 @@ public slots:
 
 Q_SIGNALS:
 	void wantQuit();
+	void finished();
 
 private:
     Ui::DelDlg *ui;

@@ -285,54 +285,58 @@
         <translation>修改日期</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="144"/>
-        <location filename="CSafeUExplorer.cpp" line="194"/>
+        <location filename="CSafeUExplorer.cpp" line="188"/>
         <source>SafeUDisk(%1GB)</source>
         <translation>安全U盘 (%1GB)</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="150"/>
+        <location filename="CSafeUExplorer.cpp" line="155"/>
         <source>Mount Failed!</source>
         <translation>挂载失败！</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="268"/>
+        <location filename="CSafeUExplorer.cpp" line="287"/>
         <source>Unplug Unexpected</source>
         <translation>错误操作</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="268"/>
+        <location filename="CSafeUExplorer.cpp" line="287"/>
         <source>Unplug SafeUDisk at Inappropriate Time! Data May be Damanged!!!!</source>
         <translation>未按预期方式使用安全U盘，已经对数据造成了一定的破坏，有可能对隐藏文件系统造成彻底的损坏!!!!</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="327"/>
+        <location filename="CSafeUExplorer.cpp" line="346"/>
         <source>Not Formated!</source>
         <translation>TF卡未格式化或未授权！</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="150"/>
-        <location filename="CSafeUExplorer.cpp" line="327"/>
+        <location filename="CSafeUExplorer.cpp" line="155"/>
+        <location filename="CSafeUExplorer.cpp" line="346"/>
         <source>Hide Partition Not Formated!</source>
         <translation>隐藏分区未格式化！</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="183"/>
+        <location filename="CSafeUExplorer.cpp" line="191"/>
+        <source>Left %1</source>
+        <translation>剩余 %1</translation>
+    </message>
+    <message>
+        <location filename="CSafeUExplorer.cpp" line="202"/>
         <source>Data Lost Warning</source>
         <translation>数据丢失警告</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="183"/>
+        <location filename="CSafeUExplorer.cpp" line="202"/>
         <source>Format Fs will Lost All Data in both Normal and Hide Partition,Continue?</source>
         <translation>分区和格式化文件系统将导致普通分区和隐藏分区的所有数据丢失，是否继续？</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="198"/>
+        <location filename="CSafeUExplorer.cpp" line="217"/>
         <source>Format Operation Succeed!</source>
         <translation>格式化操作成功！</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="202"/>
+        <location filename="CSafeUExplorer.cpp" line="221"/>
         <source>TF Card Failed or  Not Authoried!!!</source>
         <translation>TF卡读取失败或未授权！！！</translation>
     </message>
@@ -345,7 +349,7 @@
         <translation type="vanished">隐藏分区文件系统格式化需要再次插拔TF卡，插拔完成后点击“YES”</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="198"/>
+        <location filename="CSafeUExplorer.cpp" line="217"/>
         <source>Succeed</source>
         <translation>成功</translation>
     </message>
@@ -354,7 +358,7 @@
         <translation type="vanished">分区和格式化操作完成</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="202"/>
+        <location filename="CSafeUExplorer.cpp" line="221"/>
         <source>Format Failed</source>
         <translation>格式化失败</translation>
     </message>
@@ -363,14 +367,14 @@
         <translation type="vanished">隐藏分区格式化取消，只有普通分区能正常使用！</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="498"/>
-        <location filename="CSafeUExplorer.cpp" line="554"/>
+        <location filename="CSafeUExplorer.cpp" line="517"/>
+        <location filename="CSafeUExplorer.cpp" line="573"/>
         <source>File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="CSafeUExplorer.cpp" line="474"/>
-        <location filename="CSafeUExplorer.cpp" line="537"/>
+        <location filename="CSafeUExplorer.cpp" line="493"/>
+        <location filename="CSafeUExplorer.cpp" line="556"/>
         <source>Dir</source>
         <translation>文件夹</translation>
     </message>
@@ -413,26 +417,36 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="CopyDlg.cpp" line="26"/>
+        <location filename="CopyDlg.cpp" line="28"/>
         <source>Source</source>
         <translation>源</translation>
     </message>
     <message>
-        <location filename="CopyDlg.cpp" line="27"/>
+        <location filename="CopyDlg.cpp" line="29"/>
         <source>Target</source>
         <translation>目标</translation>
     </message>
     <message>
-        <location filename="CopyDlg.cpp" line="46"/>
+        <location filename="CopyDlg.cpp" line="48"/>
         <source>Calculating...</source>
         <translation>正在计算……</translation>
     </message>
     <message>
-        <location filename="CopyDlg.cpp" line="52"/>
-        <location filename="CopyDlg.cpp" line="63"/>
+        <location filename="CopyDlg.cpp" line="55"/>
+        <location filename="CopyDlg.cpp" line="66"/>
         <source>Total %1 Finished %2</source>
         <oldsource>Total %1 Current %2</oldsource>
         <translation>总共 %1 个项目，已完成 %2 个项目</translation>
+    </message>
+    <message>
+        <location filename="CopyDlg.cpp" line="72"/>
+        <source>Size Error</source>
+        <translation>空间不足</translation>
+    </message>
+    <message>
+        <location filename="CopyDlg.cpp" line="72"/>
+        <source>Left Size not Enough, Left %1,Need %2</source>
+        <translation>空间不足，剩余 %1，需要 %2</translation>
     </message>
 </context>
 <context>

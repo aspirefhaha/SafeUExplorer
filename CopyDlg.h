@@ -22,6 +22,7 @@ public slots:
 
 Q_SIGNALS:
 	void wantQuit();
+	void finished();
 
 protected slots:
 	void sltCancel(); 
@@ -31,6 +32,8 @@ protected slots:
 	void setCurItem(QString source, QString target);
 	void sltSpeed(qreal  speed);
 	virtual void reject();
+
+	void sltLeftSizeError(qint64 needSize, qint64 leftSize);
 
 private:
     Ui::CopyDlg *ui;

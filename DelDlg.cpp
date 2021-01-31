@@ -17,6 +17,7 @@ DelDlg::~DelDlg()
 void DelDlg::sltQuit()
 {
 	init();
+	emit finished();
 	QDialog::reject();
 }
 

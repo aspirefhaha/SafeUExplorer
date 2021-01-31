@@ -35,6 +35,7 @@ Q_SIGNALS:
 	void curFileProg(qint64 filesize, qint64  finishedsize);
 	void speed(qreal speed);
 	void workFinished();
+	void LeftSizeError(qint64 needSize, qint64 leftSize);
 
 protected:
     void run() override;
