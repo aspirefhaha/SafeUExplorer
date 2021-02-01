@@ -29,6 +29,7 @@
 1.0.4 修改了输入框不显示的问题
 1.0.5 输入框密码改成*
 1.0.6 拷贝的时候判断剩余空间，增加了文件系统剩余空间显示
+1.0.7 支持AES256加密算法
 */
 
 #define SIZECOLWIDTH 70
@@ -162,7 +163,7 @@ CSafeUExplorer::CSafeUExplorer(QWidget *parent) :
 
 	msgLabel->setStyleSheet(" QLabel{ color: grey }");
 
-	msgLabel->setText("V1.0.6");
+	msgLabel->setText("V1.0.7");
 
 	statusBar()->addWidget(msgLabel);
 }
