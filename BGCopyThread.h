@@ -25,6 +25,7 @@ public:
 	void addLocalSourceToRealItems(CopyItem diritem);
 	void addUDiskSourceToRealItems(CopyItem diritem);
 	void RemovePath(QString path);
+	quint64 getDiskFreeSpace(QString driver);
 	struct exfat * ef;
 	QList<QString> m_DelItemList;
 

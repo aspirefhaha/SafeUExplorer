@@ -200,5 +200,10 @@ extern "C" void aes256_init_key(const char * key);
 extern "C" void aes256_enc(int length,const char * in, char * out);
 extern "C" void aes256_dec(int length,const char * in, char * out);
 
+extern "C" void aes128_init_key(const char* key);
+extern "C" void aes128_enc(int length, const char * in, char * out);
+extern "C" void aes128_dec(int length, const char * in, char * out);
+
+
 #endif // __RIJNDAEL_H__
 

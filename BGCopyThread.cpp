@@ -1,6 +1,7 @@
 #include "exfat.h"
 #include "BGCopyThread.h"
 #include <QTime>
+#include <Windows.h>
 
 #define RWONCESIZE 409600
 
@@ -154,6 +155,22 @@ void BGCopyThread::addUDiskDelFile(QString filename, QList<QString> & list)
 	list.append(filename);
 }
 
+quint64 BGCopyThread::getDiskFreeSpace(QString driver)
+{
+
+	LPCWSTR lpcwstrDriver = (LPCWSTR)driver.utf16();
+
+	ULARGE_INTEGER liFreeBytesAvailable, liTotalBytes, liTotalFreeBytes;
+
+	if (!GetDiskFreeSpaceEx(lpcwstrDriver, &liFreeBytesAvailable, &liTotalBytes, &liTotalFreeBytes))
+	{
+		qDebug() << "ERROR: Call to GetDiskFreeSpaceEx() failed.";
+		return 0;
+	}
+	return (quint64)liTotalFreeBytes.QuadPart ;
+
+}
+
 void BGCopyThread::run()
 {
 	m_TotalSize = 1;
@@ -194,6 +211,8 @@ void BGCopyThread::run()
 		m_DelItemList.clear();
 	}
 	else if (!m_bQuit) {
+		bool isUDiskToLocal = false;
+		QString localDriver;
 		foreach(auto copyitem, copyItems) {
 			if (copyitem.sourceType == FTLDRIVE) {
 				QFileInfo sourceinfo(copyitem.source);
@@ -221,7 +240,11 @@ void BGCopyThread::run()
 					m_bQuit = true;
 				}
 				else {
+					if (localDriver.isEmpty()) {
+						localDriver = copyitem.targetDir.split(QChar('/')).at(0);
+					}
 					struct exfat_node * node;
+					isUDiskToLocal = true;
 					if (exfat_lookup(ef, &node, copyitem.source.toUtf8().data()) == 0) {
 						if (node->attrib & EXFAT_ATTRIB_DIR) {
 							addUDiskSourceToRealItems(copyitem);
@@ -247,12 +270,23 @@ void BGCopyThread::run()
 			
 		}
 		emit total(m_TotalCount, m_TotalSize);
-		long long leftsize = exfat_count_free_clusters(ef);
-		leftsize <<= (ef->sb->spc_bits + ef->sb->sector_bits);
-		qDebug() << "Left Size " << QString::number(leftsize) << "Bytes";
-		if (leftsize < m_TotalSize) {
-			m_bQuit = true;
-			emit LeftSizeError(m_TotalSize, leftsize);
+		if (!isUDiskToLocal) {
+			long long leftsize = exfat_count_free_clusters(ef);
+			leftsize <<= (ef->sb->spc_bits + ef->sb->sector_bits);
+			qDebug() << "Left Size " << QString::number(leftsize) << "Bytes";
+			if (leftsize < m_TotalSize) {
+				m_bQuit = true;
+				emit LeftSizeError(m_TotalSize, leftsize);
+			}
+		}
+		else {
+			long long leftsize = getDiskFreeSpace(localDriver);
+			leftsize <<= (ef->sb->spc_bits + ef->sb->sector_bits);
+			qDebug() << "Left Size " << QString::number(leftsize) << "Bytes";
+			if (leftsize < m_TotalSize) {
+				m_bQuit = true;
+				emit LeftSizeError(m_TotalSize, leftsize);
+			}
 		}
 
 	}

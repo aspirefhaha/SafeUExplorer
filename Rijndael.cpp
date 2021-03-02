@@ -1420,3 +1420,17 @@ extern "C" void aes256_dec(int length,const char * in, char * out)
 	rji.Decrypt(in, out, length);
 }
 
+extern "C" void aes128_init_key(const char * key)
+{
+	const  char schain[16] = { 0 };
+	rji.MakeKey(key, schain, 16, 16);
+}
+extern "C" void aes128_enc(int length, const char * in, char * out)
+{
+	rji.Encrypt(in, out, length);
+}
+extern "C" void aes128_dec(int length, const char * in, char * out)
+{
+	rji.Decrypt(in, out, length);
+}
+
